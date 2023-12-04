@@ -1,0 +1,57 @@
+{
+    "name": "jobmetric/laravel-package-core",
+    "description": "It is a standard package of different components of Laravel that helps you write different packages better and more fluently",
+    "type": "library",
+    "license": "MIT",
+    "keywords": [
+        "jobmetric",
+        "laravel",
+        "package",
+        "core",
+        "tools"
+    ],
+    "homepage": "https://doc.jobmetric.net/package/laravel-package-core",
+    "authors": [
+        {
+            "name": "Majid Mohammadian",
+            "email": "majeedmohammadian@gmail.com",
+            "homepage": "https://www.linkedin.com/in/majidmohammadian/",
+            "role": "Full Stack Developer"
+        }
+    ],
+    "require": {
+        "php": ">=8.0.1",
+        "ext-json": "*",
+        "laravel/framework": ">=9.19"
+    },
+    "autoload": {
+        "files": [
+            "src/helpers.php"
+        ],
+        "psr-4": {
+            "JobMetric\\PackageCore\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "JobMetric\\PackageCore\\PackageCoreServiceProvider"
+            ],
+            "aliases": {
+                "PackageCore": "JobMetric\\PackageCore\\Facades\\PackageCore"
+            }
+        }
+    },
+    "minimum-stability": "stable",
+    "support": {
+        "issues": "https://github.com/jobmetric/laravel-package-core/issues",
+        "forum": "https://twitter.com/jobmetric",
+        "source": "https://github.com/jobmetric/laravel-package-core"
+    },
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/majidmohammadian"
+        }
+    ]
+}
