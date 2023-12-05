@@ -135,6 +135,8 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
                 $this->afterRegisterCommandPackage();
             }
 
+            // @todo register publishable
+
             $this->runInConsolePackage();
         } else if ($this->app->runningUnitTests()) {
             $this->runInTestPackage();
