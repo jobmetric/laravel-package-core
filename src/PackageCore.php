@@ -3,6 +3,7 @@
 namespace JobMetric\PackageCore;
 
 use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
+use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
 use Str;
 
 class PackageCore
@@ -103,7 +104,7 @@ class PackageCore
      */
     public function registerClass(string $key, string $class, string $type = 'bind'): static
     {
-        if(! in_array($type, ['bind', 'singleton', 'scoped'])) {
+        if(! in_array($type, RegisterClassTypeEnum::values())) {
             throw new RegisterClassTypeNotFoundException($type);
         }
 

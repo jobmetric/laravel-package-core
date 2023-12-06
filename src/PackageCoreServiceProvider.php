@@ -3,6 +3,7 @@
 namespace JobMetric\PackageCore;
 
 use Illuminate\Support\ServiceProvider;
+use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseRouteFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
@@ -58,13 +59,13 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
         // register classes
         if (isset($this->package->option['classes'])) {
             foreach ($this->package->option['classes'] as $key => $item) {
-                if ('bind' == $item['type']) {
+                if (RegisterClassTypeEnum::BIND() == $item['type']) {
                     $this->app->bind($key, $item['class']);
                 }
-                if ('singleton' == $item['type']) {
+                if (RegisterClassTypeEnum::SINGLETON() == $item['type']) {
                     $this->app->singleton($key, $item['class']);
                 }
-                if ('scoped' == $item['type']) {
+                if (RegisterClassTypeEnum::SCOPED() == $item['type']) {
                     $this->app->scoped($key, $item['class']);
                 }
             }
