@@ -23,6 +23,24 @@ trait EventTrait
     }
 
     /**
+     * before new instance package
+     *
+     * @return void
+     */
+    public function beforeNewInstancePackage(): void
+    {
+    }
+
+    /**
+     * after new instance package
+     *
+     * @return void
+     */
+    public function afterNewInstancePackage(): void
+    {
+    }
+
+    /**
      * before boot package
      *
      * @return void
@@ -109,6 +127,15 @@ trait EventTrait
      * @return void
      */
     public function afterRegisterCommandPackage(): void
+    {
+    }
+
+    /**
+     * after register command package
+     *
+     * @return void
+     */
+    public function afterRegisterPublishablePackage(): void
     {
     }
 }
