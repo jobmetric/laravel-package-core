@@ -5,11 +5,10 @@ namespace JobMetric\PackageCore\Exceptions;
 use Exception;
 use Throwable;
 
-class BaseRouteFileNotFoundException extends Exception
+class MigrationFolderNotFoundException extends Exception
 {
     public function __construct(string $package, int $code = 400, ?Throwable $previous = null)
     {
-        parent::__construct("The base route file $package not found.", $code, $previous);
-
+        parent::__construct("Migration folder not found in package $package.", $code, $previous);
     }
 }
