@@ -2,8 +2,12 @@
 
 namespace JobMetric\PackageCore;
 
-use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
 use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
+use JobMetric\PackageCore\Enums\RegisterPublishableTypeEnum;
+use JobMetric\PackageCore\Exceptions\DependencyPublishableClassNotFoundException;
+use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
+use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
+use JobMetric\PackageCore\Exceptions\RegisterPublishableTypeNotFoundException;
 use Str;
 
 class PackageCore
@@ -48,7 +52,7 @@ class PackageCore
         $this->option['hasConfig'] = true;
 
         foreach ($configs as $config) {
-            if(!in_array($config, ['config', $this->name])) {
+            if (!in_array($config, ['config', $this->name])) {
                 $this->option['config'][] = $config;
             }
         }
@@ -60,10 +64,17 @@ class PackageCore
      * has migration file in package.
      *
      * @return static
+     * @throws MigrationFolderNotFoundException
      */
     public function hasMigration(): static
     {
-        $this->option['hasMigration'] = true;
+        $migration_path = realpath($this->option['basePath'] . '/../database/migrations');
+
+        if($migration_path) {
+            $this->option['hasMigration'] = true;
+        } else {
+            throw new MigrationFolderNotFoundException($this->name);
+        }
 
         return $this;
     }
@@ -104,15 +115,15 @@ class PackageCore
      */
     public function registerClass(string $key, string $class, string $type = 'bind'): static
     {
-        if(! in_array($type, RegisterClassTypeEnum::values())) {
+        if (!in_array($type, RegisterClassTypeEnum::values())) {
             throw new RegisterClassTypeNotFoundException($type);
         }
 
-        if(! isset($this->option['classes'])) {
+        if (!isset($this->option['classes'])) {
             $this->option['classes'] = [];
         }
 
-        if(! in_array($key, $this->option['classes'])) {
+        if (!in_array($key, $this->option['classes'])) {
             $this->option['classes'][$key] = [
                 'class' => $class,
                 'type' => $type,
@@ -131,13 +142,76 @@ class PackageCore
      */
     public function registerCommand(string $class): static
     {
-        if(! isset($this->option['commands'])) {
+        if (!isset($this->option['commands'])) {
             $this->option['commands'] = [];
         }
 
-        if(! in_array($class, $this->option['commands'])) {
+        if (!in_array($class, $this->option['commands'])) {
             $this->option['commands'][] = $class;
         }
+
+        return $this;
+    }
+
+    /**
+     * register publishable in package.
+     *
+     * @param array $paths
+     * @param string|array|null $groups
+     *
+     * @return static
+     */
+    public function registerPublishable(array $paths, string|array|null $groups = null): static
+    {
+        if (is_null($groups)) {
+            $groups = $this->name;
+        }
+
+        if (is_string($groups)) {
+            $groups = [$groups];
+        }
+
+        if (!in_array($this->name, $groups)) {
+            $groups[] = $this->name;
+        }
+
+        if (!isset($this->option['publishable'])) {
+            $this->option['publishable'] = [];
+        }
+
+        $group = md5(implode(',', $groups));
+
+        $this->option['publishable'][$group] = [
+            'paths' => $paths,
+            'groups' => $groups,
+        ];
+
+        return $this;
+    }
+
+    /**
+     * register dependency publishable in package.
+     *
+     * @param string $provider
+     * @param string|null $group
+     *
+     * @return static
+     * @throws DependencyPublishableClassNotFoundException
+     */
+    public function registerDependencyPublishable(string $provider, string $group = null): static
+    {
+        if(!class_exists($provider)) {
+            throw new DependencyPublishableClassNotFoundException($this->name, $provider);
+        }
+
+        if (!isset($this->option['dependency_publishable'])) {
+            $this->option['dependency_publishable'] = [];
+        }
+
+        $this->option['dependency_publishable'][] = [
+            'provider' => $provider,
+            'group' => $group,
+        ];
 
         return $this;
     }

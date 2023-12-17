@@ -3,16 +3,15 @@
 namespace JobMetric\PackageCore;
 
 use Illuminate\Support\ServiceProvider;
-use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseRouteFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\InvalidPackageException;
-use ReflectionClass;
+use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 
 abstract class PackageCoreServiceProvider extends ServiceProvider
 {
-    use EventTrait, FactoryTrait;
+    use EventTrait, FactoryTrait, ProviderTrait;
 
     /**
      * The package core object.
@@ -45,61 +44,10 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
         // factory resolver
         $this->factoryResolver();
 
-        // register package
-        $this->package = new PackageCore;
-
-        $this->package->setBasePath($this->getPackageBaseDir());
-
-        $this->configuration($this->package);
-
-        if (empty($this->package->name)) {
-            throw new InvalidPackageException(class_basename($this->package));
-        }
-
-        // register classes
-        if (isset($this->package->option['classes'])) {
-            foreach ($this->package->option['classes'] as $key => $item) {
-                if (RegisterClassTypeEnum::BIND() == $item['type']) {
-                    $this->app->bind($key, $item['class']);
-                }
-                if (RegisterClassTypeEnum::SINGLETON() == $item['type']) {
-                    $this->app->singleton($key, $item['class']);
-                }
-                if (RegisterClassTypeEnum::SCOPED() == $item['type']) {
-                    $this->app->scoped($key, $item['class']);
-                }
-            }
-
-            $this->afterRegisterClassPackage();
-        }
-
-        // register config file
-        if ($this->package->option['hasConfig']) {
-            $baseConfigFile = realpath($this->package->option['basePath'] . '/../config/config.php');
-            if (!file_exists($baseConfigFile)) {
-                $baseConfigFile = realpath($this->package->option['basePath'] . '/../config/' . $this->package->name . '.php');
-            }
-
-            if (file_exists($baseConfigFile)) {
-                $this->mergeConfigFrom($baseConfigFile, $this->package->shortName());
-            } else {
-                throw new BaseConfigFileNotFoundException($this->package->name);
-            }
-
-            if (isset($this->package->option['config'])) {
-                foreach ($this->package->option['config'] as $item) {
-                    $configFile = realpath($this->package->option['basePath'] . '/../config/' . $item . '.php');
-
-                    if (file_exists($configFile)) {
-                        $this->mergeConfigFrom($configFile, $item);
-                    } else {
-                        throw new ConfigFileNotFoundException($this->package->name, $item);
-                    }
-                }
-            }
-
-            $this->configLoadedPackage();
-        }
+        // registration package
+        $this->registerPackage();
+        $this->registerClass();
+        $this->registerConfig();
 
         $this->afterRegisterPackage();
     }
@@ -108,64 +56,36 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
      * boot provider
      *
      * @return void
+     * @throws BaseConfigFileNotFoundException
      * @throws BaseRouteFileNotFoundException
+     * @throws ConfigFileNotFoundException
+     * @throws MigrationFolderNotFoundException
      */
     public function boot(): void
     {
         $this->beforeBootPackage();
 
-        // load translation
-        if (isset($this->package->option['hasTranslation'])) {
-            $this->loadTranslationsFrom($this->package->option['basePath'] . '/../lang', $this->package->shortName());
-
-            $this->translationsLoadedPackage();
-        }
+        // bootable package
+        $this->loadTranslation();
+        $this->loadRoute();
 
         if ($this->app->runningInConsole()) {
-            // load migration
-            if (isset($this->package->option['hasMigration'])) {
-                $this->loadMigrationsFrom($this->package->option['basePath'] . '/../database/migrations');
-
-                $this->migrationLoadedPackage();
-            }
-
-            // load command
-            if (isset($this->package->option['commands'])) {
-                $this->commands($this->package->option['commands']);
-
-                $this->afterRegisterCommandPackage();
-            }
-
-            // @todo register publishable
+            // bootable package in console
+            $this->loadMigration();
+            $this->registerCommand();
+            $this->registerPublishable();
 
             $this->runInConsolePackage();
         } else if ($this->app->runningUnitTests()) {
+            // bootable package in test
+
             $this->runInTestPackage();
         } else {
+            // bootable package in web
+
             $this->runInWebPackage();
         }
 
-        // load route
-        if ($this->package->option['hasRoute']) {
-            $routeFile = realpath($this->package->option['basePath'] . '/../routes/route.php');
-            if (!file_exists($routeFile)) {
-                $routeFile = realpath($this->package->option['basePath'] . '/../routes/' . $this->package->name . '.php');
-            }
-
-            if (file_exists($routeFile)) {
-                $this->loadRoutesFrom($routeFile);
-            } else {
-                throw new BaseRouteFileNotFoundException($this->package->name, 'route');
-            }
-        }
-
         $this->afterBootPackage();
-    }
-
-    protected function getPackageBaseDir(): string
-    {
-        $reflector = new ReflectionClass(get_class($this));
-
-        return dirname($reflector->getFileName());
     }
 }

@@ -138,4 +138,31 @@ trait EventTrait
     public function afterRegisterPublishablePackage(): void
     {
     }
+
+    /**
+     * after publishable dependency package
+     *
+     * @return void
+     */
+    public function afterPublishableDependencyPackage(): void
+    {
+    }
+
+    /**
+     * after publishable config package
+     *
+     * @return void
+     */
+    public function afterPublishableConfigPackage(): void
+    {
+    }
+
+    /**
+     * after publishable migration package
+     *
+     * @return void
+     */
+    public function afterPublishableMigrationPackage(): void
+    {
+    }
 }
