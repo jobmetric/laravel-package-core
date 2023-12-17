@@ -9,6 +9,6 @@ class RegisterClassTypeNotFoundException extends Exception
 {
     public function __construct(string $type, int $code = 400, ?Throwable $previous = null)
     {
-        parent::__construct(sprintf('The register class type %s not found.', $type), $code, $previous);
+        parent::__construct("The register class type $type not found.", $code, $previous);
     }
 }

@@ -9,6 +9,6 @@ class BaseConfigFileNotFoundException extends Exception
 {
     public function __construct(string $package, int $code = 400, ?Throwable $previous = null)
     {
-        parent::__construct(sprintf('The base config file %s not found.', $package), $code, $previous);
+        parent::__construct("The base config file $package not found.", $code, $previous);
     }
 }
