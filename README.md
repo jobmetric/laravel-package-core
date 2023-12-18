@@ -14,3 +14,4 @@ composer require jobmetric/laravel-package-core
 This package includes different parts that I will mention in order:
 
 - [Package Core Service Provider](https://github.com/jobmetric/laravel-package-core/blob/master/docs/provider.md)
+- [Enum To Array](https://github.com/jobmetric/laravel-package-core/blob/master/docs/enum.md)

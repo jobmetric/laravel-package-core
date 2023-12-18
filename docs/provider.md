@@ -185,3 +185,5 @@ The list of all events is given in the table below:
 | `afterPublishableDependencyPackage` | This event is called after registering the package publishable dependency. |
 | `afterPublishableConfigPackage` | This event is called after registering the package publishable config. |
 | `afterPublishableMigrationPackage` | This event is called after registering the package publishable migration. |
+
+- [Next To Enum To Array](https://github.com/jobmetric/laravel-package-core/blob/master/docs/enum.md)
