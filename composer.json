@@ -32,17 +32,7 @@
             "JobMetric\\PackageCore\\": "src/"
         }
     },
-    "extra": {
-        "laravel": {
-            "providers": [
-                "JobMetric\\PackageCore\\PackageCoreServiceProvider"
-            ],
-            "aliases": {
-                "PackageCore": "JobMetric\\PackageCore\\Facades\\PackageCore"
-            }
-        }
-    },
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "support": {
         "issues": "https://github.com/jobmetric/laravel-package-core/issues",
         "forum": "https://twitter.com/jobmetric",
