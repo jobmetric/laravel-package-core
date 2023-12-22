@@ -178,7 +178,7 @@ trait ProviderTrait
      */
     public function loadRoute(): void
     {
-        if ($this->package->option['hasRoute']) {
+        if (isset($this->package->option['hasRoute'])) {
             $routeFile = realpath($this->package->option['basePath'] . '/../routes/route.php');
             if (!file_exists($routeFile)) {
                 $routeFile = realpath($this->package->option['basePath'] . '/../routes/' . $this->package->name . '.php');
