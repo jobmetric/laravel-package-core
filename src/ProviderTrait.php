@@ -77,7 +77,7 @@ trait ProviderTrait
      */
     public function registerConfig(): void
     {
-        if ($this->package->option['hasConfig']) {
+        if (isset($this->package->option['hasConfig'])) {
             $baseConfigFile = realpath($this->package->option['basePath'] . '/../config/config.php');
             if (!file_exists($baseConfigFile)) {
                 $baseConfigFile = realpath($this->package->option['basePath'] . '/../config/' . $this->package->name . '.php');
