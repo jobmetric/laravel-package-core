@@ -5,6 +5,7 @@ namespace JobMetric\PackageCore;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
+use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
 
 trait PublishableTrait
 {
@@ -92,6 +93,31 @@ trait PublishableTrait
                 }
 
                 $this->afterPublishableMigrationPackage();
+            }
+        }
+    }
+
+    /**
+     * publishable resources view
+     *
+     * @return void
+     * @throws ViewFolderNotFoundException
+     */
+    public function publishableView(): void
+    {
+        if (isset($this->package->option['hasView'])) {
+            if ($this->package->option['hasView']) {
+                $view_path = realpath($this->package->option['basePath'] . '/../resources/views');
+
+                if ($view_path) {
+                    $this->publishes([
+                        $view_path => resource_path('views/vendor/' . $this->package->shortName())
+                    ], [$this->package->name, $this->package->name . '-views']);
+                } else {
+                    throw new ViewFolderNotFoundException($this->package->name);
+                }
+
+                $this->afterPublishableViewPackage();
             }
         }
     }

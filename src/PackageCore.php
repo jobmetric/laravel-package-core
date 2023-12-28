@@ -8,6 +8,7 @@ use JobMetric\PackageCore\Exceptions\DependencyPublishableClassNotFoundException
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
 use JobMetric\PackageCore\Exceptions\RegisterPublishableTypeNotFoundException;
+use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
 use Str;
 
 class PackageCore
@@ -74,6 +75,28 @@ class PackageCore
             $this->option['hasMigration'] = true;
         } else {
             throw new MigrationFolderNotFoundException($this->name);
+        }
+
+        return $this;
+    }
+
+    /**
+     * has view file in package.
+     *
+     * @param bool $publishable
+     *
+     * @return static
+     * @throws ViewFolderNotFoundException
+     */
+    public function hasView(bool $publishable = false): static
+    {
+        $view_path = realpath($this->option['basePath'] . '/../resources/views');
+
+        if($view_path) {
+            $this->option['hasView'] = true;
+            $this->option['isPublishableView'] = $publishable;
+        } else {
+            throw new ViewFolderNotFoundException($this->name);
         }
 
         return $this;

@@ -104,6 +104,15 @@ trait EventTrait
     }
 
     /**
+     * resource view loaded package
+     *
+     * @return void
+     */
+    public function viewLoadedPackage(): void
+    {
+    }
+
+    /**
      * translations loaded package
      *
      * @return void
@@ -163,6 +172,15 @@ trait EventTrait
      * @return void
      */
     public function afterPublishableMigrationPackage(): void
+    {
+    }
+
+    /**
+     * after publishable resources view package
+     *
+     * @return void
+     */
+    public function afterPublishableViewPackage(): void
     {
     }
 }

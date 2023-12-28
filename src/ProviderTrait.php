@@ -8,6 +8,7 @@ use JobMetric\PackageCore\Exceptions\BaseRouteFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\InvalidPackageException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
+use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
 use ReflectionClass;
 
 trait ProviderTrait
@@ -134,6 +135,20 @@ trait ProviderTrait
     }
 
     /**
+     * load resources view
+     *
+     * @return void
+     */
+    public function loadView(): void
+    {
+        if (isset($this->package->option['hasView'])) {
+            $this->loadViewsFrom($this->package->option['basePath'] . '/../resources/views', $this->package->shortName());
+
+            $this->viewLoadedPackage();
+        }
+    }
+
+    /**
      * register command
      *
      * @return void
@@ -154,12 +169,20 @@ trait ProviderTrait
      * @throws BaseConfigFileNotFoundException
      * @throws ConfigFileNotFoundException
      * @throws MigrationFolderNotFoundException
+     * @throws ViewFolderNotFoundException
      */
     public function registerPublishable(): void
     {
         $this->publishableDependency();
         $this->publishableConfig();
         $this->publishableMigration();
+
+        // publishable view
+        if (isset($this->package->option['isPublishableView'])) {
+            if ($this->package->option['isPublishableView']) {
+                $this->publishableView();
+            }
+        }
 
         if (isset($this->package->option['publishable'])) {
             foreach ($this->package->option['publishable'] as $item) {

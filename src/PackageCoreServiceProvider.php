@@ -33,8 +33,6 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
      * register provider
      *
      * @return void
-     * @throws BaseConfigFileNotFoundException
-     * @throws ConfigFileNotFoundException
      * @throws InvalidPackageException
      */
     public function register(): void
@@ -47,7 +45,7 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
         // registration package
         $this->registerPackage();
         $this->registerClass();
-        $this->registerConfig();
+        $this->loadView();
 
         $this->afterRegisterPackage();
     }
