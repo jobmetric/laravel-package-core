@@ -77,3 +77,5 @@ enum Status
 
 Status::arrayValues(); // [1 => 'ACTIVE', 2 => 'INACTIVE']
 ```
+
+- [Next To Console Tools](https://github.com/jobmetric/laravel-package-core/blob/master/docs/console-tools.md)

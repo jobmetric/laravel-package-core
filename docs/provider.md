@@ -34,6 +34,7 @@ class FlowServiceProvider extends PackageCoreServiceProvider
             ->hasMigration()
             ->hasRoute()
             ->hasTranslation()
+            ->hasView()
             ->registerDependencyPublishable(TranslationServiceProvider::class)
             ->registerCommand(Commands\MakeFlow::class);
             ->registerClass('Flow', FlowManager::class);
@@ -82,6 +83,16 @@ Create your migration files and if you click the Laravel migration command, thes
 ```php
 $package->hasMigration();
 ```
+
+#### hasView
+
+This method is used to register your package view files. Pay attention to your package folder structure, make sure there is a `resources/views` folder next to the `src` folder.
+
+```php
+$package->hasView($publishable = false);
+```
+
+> The `$publishable` parameter is optional and is used to specify the path of view files in the application. If the value of this parameter is true, the view files will be published in the `resources/views/vendor/package-short-name` folder.
 
 #### hasRoute
 
@@ -178,6 +189,7 @@ The list of all events is given in the table below:
 | `runInWebPackage` | This event is called when the package is running in the web. |
 | `configLoadedPackage` | This event is called when the package configuration is loaded. |
 | `migrationLoadedPackage` | This event is called when the package migration is loaded. |
+| `viewLoadedPackage` | This event is called when the package view is loaded. |
 | `translationsLoadedPackage` | This event is called when the package translation is loaded. |
 | `afterRegisterClassPackage` | This event is called after registering the package class. |
 | `afterRegisterCommandPackage` | This event is called after registering the package command. |
@@ -185,5 +197,6 @@ The list of all events is given in the table below:
 | `afterPublishableDependencyPackage` | This event is called after registering the package publishable dependency. |
 | `afterPublishableConfigPackage` | This event is called after registering the package publishable config. |
 | `afterPublishableMigrationPackage` | This event is called after registering the package publishable migration. |
+| `afterPublishableViewPackage` | This event is called after registering the package publishable view. |
 
 - [Next To Enum To Array](https://github.com/jobmetric/laravel-package-core/blob/master/docs/enum.md)
