@@ -2,11 +2,8 @@
 
 namespace JobMetric\PackageCore;
 
-use Illuminate\Container\Container;
-use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
-use Throwable;
 
 trait FactoryTrait
 {
@@ -19,7 +16,7 @@ trait FactoryTrait
     {
         Factory::guessFactoryNamesUsing(function (string $modelName) {
             $namespace = 'Database\\Factories\\';
-            $appScope = $this->appNamespace();
+            $appScope = appNamespace();
 
             if (Str::startsWith($modelName, $appScope . 'Models\\')) {
                 $modelName = Str::after($modelName, $appScope . 'Models\\');
@@ -38,21 +35,5 @@ trait FactoryTrait
 
             return $namespace . $modelName . 'Factory';
         });
-    }
-
-    /**
-     * Get the application namespace for the application.
-     *
-     * @return string
-     */
-    private function appNamespace(): string
-    {
-        try {
-            return Container::getInstance()
-                ->make(Application::class)
-                ->getNamespace();
-        } catch (Throwable) {
-            return 'App\\';
-        }
     }
 }
