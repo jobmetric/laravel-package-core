@@ -47,3 +47,5 @@ This method displays a message in the console.
 > **$message:** The message to be displayed.
 > 
 > **$type:** The type of message to be displayed. (`info`,`error`,`success`)
+
+- [Next To Helper Function](https://github.com/jobmetric/laravel-package-core/blob/master/docs/helper.md)
