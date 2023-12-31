@@ -6,13 +6,15 @@ This package provides a feature that can be used to make things faster in the co
 
 ## Methods
 
-### getStub($path, $items)
+### getStub($path, $items, $fileType)
 
 This method returns the contents of the stub file.
 
 > **$path:** The path to the stub file.
 >
 > **$items:** An array of items to be replaced in the stub file.
+> 
+> **$fileType:** The type of file to be replaced. (`.php`,`.js`,`.css`) default: `.php.stub`
 
 ### putFile($path, $content)
 
