@@ -9,11 +9,13 @@ trait ConsoleTools
      *
      * @param string $path
      * @param array $items
+     * @param string $fileType
+     *
      * @return string
      */
-    protected function getStub(string $path, array $items = []): string
+    protected function getStub(string $path, array $items = [], string $fileType = '.php.stub'): string
     {
-        $content = file_get_contents(__DIR__ . '/stub/' . $path . '.php.stub');
+        $content = file_get_contents($path . $fileType);
 
         foreach ($items as $key => $item) {
             $content = str_replace('{{' . $key . '}}', $item, $content);
