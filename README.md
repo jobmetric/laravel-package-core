@@ -17,3 +17,4 @@ This package includes different parts that I will mention in order:
 - [Enum To Array](https://github.com/jobmetric/laravel-package-core/blob/master/docs/enum.md)
 - [Console Tools](https://github.com/jobmetric/laravel-package-core/blob/master/docs/console-tools.md)
 - [Helper Functions](https://github.com/jobmetric/laravel-package-core/blob/master/docs/helper.md)
+- [Boolean Status](https://github.com/jobmetric/laravel-package-core/blob/master/docs/boolean-status.md)

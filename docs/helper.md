@@ -13,3 +13,5 @@ This method returns the application namespace.
 ```php
 appNamespace(); // return 'App\\'
 ```
+
+- [Next To Boolean Status](https://github.com/jobmetric/laravel-package-core/blob/master/docs/boolean-status.md)
