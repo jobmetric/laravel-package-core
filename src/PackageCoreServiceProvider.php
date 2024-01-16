@@ -3,11 +3,13 @@
 namespace JobMetric\PackageCore;
 
 use Illuminate\Support\ServiceProvider;
+use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseRouteFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\InvalidPackageException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
+use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
 
 abstract class PackageCoreServiceProvider extends ServiceProvider
 {
@@ -60,7 +62,9 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
      * @throws BaseConfigFileNotFoundException
      * @throws BaseRouteFileNotFoundException
      * @throws ConfigFileNotFoundException
+     * @throws AssetFolderNotFoundException
      * @throws MigrationFolderNotFoundException
+     * @throws ViewFolderNotFoundException
      */
     public function boot(): void
     {

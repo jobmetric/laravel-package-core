@@ -2,6 +2,7 @@
 
 namespace JobMetric\PackageCore;
 
+use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
@@ -118,6 +119,31 @@ trait PublishableTrait
                 }
 
                 $this->afterPublishableViewPackage();
+            }
+        }
+    }
+
+    /**
+     * publishable asset
+     *
+     * @return void
+     * @throws AssetFolderNotFoundException
+     */
+    public function publishableAsset(): void
+    {
+        if (isset($this->package->option['hasAsset'])) {
+            if ($this->package->option['hasAsset']) {
+                $asset_path = realpath($this->package->option['basePath'] . '/../assets');
+
+                if ($asset_path) {
+                    $this->publishes([
+                        $asset_path => public_path('assets/vendor/' . $this->package->shortName())
+                    ], [$this->package->name, $this->package->name . '-assets']);
+                } else {
+                    throw new AssetFolderNotFoundException($this->package->name);
+                }
+
+                $this->afterPublishableAssetPackage();
             }
         }
     }

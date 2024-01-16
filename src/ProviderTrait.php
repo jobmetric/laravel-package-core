@@ -3,6 +3,7 @@
 namespace JobMetric\PackageCore;
 
 use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
+use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseRouteFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
@@ -168,6 +169,7 @@ trait ProviderTrait
      * @return void
      * @throws BaseConfigFileNotFoundException
      * @throws ConfigFileNotFoundException
+     * @throws AssetFolderNotFoundException
      * @throws MigrationFolderNotFoundException
      * @throws ViewFolderNotFoundException
      */
@@ -181,6 +183,13 @@ trait ProviderTrait
         if (isset($this->package->option['isPublishableView'])) {
             if ($this->package->option['isPublishableView']) {
                 $this->publishableView();
+            }
+        }
+
+        // publishable asset
+        if (isset($this->package->option['hasAsset'])) {
+            if ($this->package->option['hasAsset']) {
+                $this->publishableAsset();
             }
         }
 

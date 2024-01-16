@@ -4,6 +4,7 @@ namespace JobMetric\PackageCore;
 
 use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
 use JobMetric\PackageCore\Enums\RegisterPublishableTypeEnum;
+use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\DependencyPublishableClassNotFoundException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
@@ -122,6 +123,27 @@ class PackageCore
     public function hasTranslation(): static
     {
         $this->option['hasTranslation'] = true;
+
+        return $this;
+    }
+
+    /**
+     * has asset files in package.
+     *
+     * @param bool $publishable
+     *
+     * @return static
+     * @throws AssetFolderNotFoundException
+     */
+    public function hasAsset(bool $publishable = false): static
+    {
+        $view_path = realpath($this->option['basePath'] . '/../assets');
+
+        if($view_path) {
+            $this->option['hasAsset'] = true;
+        } else {
+            throw new AssetFolderNotFoundException($this->name);
+        }
 
         return $this;
     }

@@ -183,4 +183,13 @@ trait EventTrait
     public function afterPublishableViewPackage(): void
     {
     }
+
+    /**
+     * after publishable asset package
+     *
+     * @return void
+     */
+    public function afterPublishableAssetPackage(): void
+    {
+    }
 }
