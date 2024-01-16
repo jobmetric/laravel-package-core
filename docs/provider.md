@@ -94,6 +94,14 @@ $package->hasView($publishable = false);
 
 > The `$publishable` parameter is optional and is used to specify the path of view files in the application. If the value of this parameter is true, the view files will be published in the `resources/views/vendor/package-short-name` folder.
 
+#### hasAsset
+
+This method is used to register your package asset files. Pay attention to your package folder structure, make sure there is a `assets` folder next to the `src` folder.
+
+```php
+$package->hasAsset();
+```
+
 #### hasRoute
 
 This method is employed to register your package's path files. Pay close attention to your package's folder structure, ensuring the existence of a "routes" folder next to the src folder.
@@ -176,27 +184,28 @@ public function beforeRegisterPackage()
 
 The list of all events is given in the table below:
 
-| Event | Description |
-| --- | --- |
-| `beforeRegisterPackage` | This event is called before registering the package. |
-| `afterRegisterPackage` | This event is called after registering the package. |
-| `beforeNewInstancePackage` | This event is called before creating a new instance of the package. |
-| `afterNewInstancePackage` | This event is called after creating a new instance of the package. |
-| `beforeBootPackage` | This event is called before booting the package. |
-| `afterBootPackage` | This event is called after booting the package. |
-| `runInConsolePackage` | This event is called when the package is running in the console. |
-| `runInTestPackage` | This event is called when the package is running in the test. |
-| `runInWebPackage` | This event is called when the package is running in the web. |
-| `configLoadedPackage` | This event is called when the package configuration is loaded. |
-| `migrationLoadedPackage` | This event is called when the package migration is loaded. |
-| `viewLoadedPackage` | This event is called when the package view is loaded. |
-| `translationsLoadedPackage` | This event is called when the package translation is loaded. |
-| `afterRegisterClassPackage` | This event is called after registering the package class. |
-| `afterRegisterCommandPackage` | This event is called after registering the package command. |
-| `afterRegisterPublishablePackage` | This event is called after registering the package publishable. |
+| Event                               | Description                                                                |
+|-------------------------------------|----------------------------------------------------------------------------|
+| `beforeRegisterPackage`             | This event is called before registering the package.                       |
+| `afterRegisterPackage`              | This event is called after registering the package.                        |
+| `beforeNewInstancePackage`          | This event is called before creating a new instance of the package.        |
+| `afterNewInstancePackage`           | This event is called after creating a new instance of the package.         |
+| `beforeBootPackage`                 | This event is called before booting the package.                           |
+| `afterBootPackage`                  | This event is called after booting the package.                            |
+| `runInConsolePackage`               | This event is called when the package is running in the console.           |
+| `runInTestPackage`                  | This event is called when the package is running in the test.              |
+| `runInWebPackage`                   | This event is called when the package is running in the web.               |
+| `configLoadedPackage`               | This event is called when the package configuration is loaded.             |
+| `migrationLoadedPackage`            | This event is called when the package migration is loaded.                 |
+| `viewLoadedPackage`                 | This event is called when the package view is loaded.                      |
+| `translationsLoadedPackage`         | This event is called when the package translation is loaded.               |
+| `afterRegisterClassPackage`         | This event is called after registering the package class.                  |
+| `afterRegisterCommandPackage`       | This event is called after registering the package command.                |
+| `afterRegisterPublishablePackage`   | This event is called after registering the package publishable.            |
 | `afterPublishableDependencyPackage` | This event is called after registering the package publishable dependency. |
-| `afterPublishableConfigPackage` | This event is called after registering the package publishable config. |
-| `afterPublishableMigrationPackage` | This event is called after registering the package publishable migration. |
-| `afterPublishableViewPackage` | This event is called after registering the package publishable view. |
+| `afterPublishableConfigPackage`     | This event is called after registering the package publishable config.     |
+| `afterPublishableMigrationPackage`  | This event is called after registering the package publishable migration.  |
+| `afterPublishableViewPackage`       | This event is called after registering the package publishable view.       |
+| `afterPublishableAssetPackage`      | This event is called after registering the package publishable asset.      |
 
 - [Next To Enum To Array](https://github.com/jobmetric/laravel-package-core/blob/master/docs/enum.md)
