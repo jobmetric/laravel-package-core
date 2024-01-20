@@ -64,6 +64,9 @@ trait ProviderTrait
                 if (RegisterClassTypeEnum::SCOPED() == $item['type']) {
                     $this->app->scoped($key, $item['class']);
                 }
+                if (RegisterClassTypeEnum::REGISTER() == $item['type']) {
+                    $this->app->register($item['class']);
+                }
             }
 
             $this->afterRegisterClassPackage();
