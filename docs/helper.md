@@ -14,4 +14,13 @@ This method returns the application namespace.
 appNamespace(); // return 'App\\'
 ```
 
+### queryToSql($query)
+
+This method returns the SQL query of a query builder.
+
+```php
+$query = DB::table('users')->where('votes', '>', 100);
+queryToSql($query); // return 'select * from `users` where `votes` > 100'
+```
+
 - [Next To Boolean Status](https://github.com/jobmetric/laravel-package-core/blob/master/docs/boolean-status.md)
