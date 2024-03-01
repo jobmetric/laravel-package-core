@@ -23,4 +23,12 @@ $query = DB::table('users')->where('votes', '>', 100);
 queryToSql($query); // return 'select * from `users` where `votes` > 100'
 ```
 
+### checkDatabaseConnection()
+
+This method checks the database connection.
+
+```php
+checkDatabaseConnection(); // return true or false
+```
+
 - [Next To Boolean Status](https://github.com/jobmetric/laravel-package-core/blob/master/docs/boolean-status.md)
