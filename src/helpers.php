@@ -4,6 +4,7 @@ use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Builder as EloquentBuilder;
 use Illuminate\Database\Query\Builder as QueryBuilder;
+use Illuminate\Support\Facades\DB;
 
 if (!function_exists('appNamespace')) {
     /**
@@ -34,5 +35,22 @@ if (!function_exists('queryToSql')) {
     function queryToSql(EloquentBuilder|QueryBuilder $builder): string
     {
         return vsprintf(str_replace('?', '%s', str_replace('?', "'?'", $builder->toSql())), $builder->getBindings());
+    }
+}
+
+if (!function_exists('checkDatabaseConnection')) {
+    /**
+     * check database connection
+     *
+     * @return bool
+     */
+    function checkDatabaseConnection(): bool
+    {
+        try {
+            DB::connection()->getPdo();
+            return true;
+        } catch (\Exception $e) {
+            return false;
+        }
     }
 }
