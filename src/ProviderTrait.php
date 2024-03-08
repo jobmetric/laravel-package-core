@@ -226,4 +226,20 @@ trait ProviderTrait
             }
         }
     }
+
+    /**
+     * load console kernel file for scheduling
+     *
+     * @return void
+     */
+    public function loadConsoleKernel(): void
+    {
+        if (isset($this->package->option['hasConsoleKernel'])) {
+            $this->app->booted(function () {
+                $this->app->make($this->package->getNamespace() . '\ConsoleKernel');
+            });
+
+            $this->consoleKernelLoadedPackage();
+        }
+    }
 }

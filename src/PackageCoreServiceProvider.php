@@ -51,6 +51,7 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
         $this->registerConfig();
         $this->registerClass();
         $this->loadView();
+        $this->loadConsoleKernel();
 
         $this->afterRegisterPackage();
     }

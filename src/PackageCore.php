@@ -2,15 +2,15 @@
 
 namespace JobMetric\PackageCore;
 
+use DirectoryIterator;
+use Illuminate\Support\Str;
 use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
-use JobMetric\PackageCore\Enums\RegisterPublishableTypeEnum;
 use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
+use JobMetric\PackageCore\Exceptions\ConsoleKernelFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\DependencyPublishableClassNotFoundException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\RegisterClassTypeNotFoundException;
-use JobMetric\PackageCore\Exceptions\RegisterPublishableTypeNotFoundException;
 use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
-use Str;
 
 class PackageCore
 {
@@ -72,7 +72,7 @@ class PackageCore
     {
         $migration_path = realpath($this->option['basePath'] . '/../database/migrations');
 
-        if($migration_path) {
+        if ($migration_path) {
             $this->option['hasMigration'] = true;
         } else {
             throw new MigrationFolderNotFoundException($this->name);
@@ -93,7 +93,7 @@ class PackageCore
     {
         $view_path = realpath($this->option['basePath'] . '/../resources/views');
 
-        if($view_path) {
+        if ($view_path) {
             $this->option['hasView'] = true;
             $this->option['isPublishableView'] = $publishable;
         } else {
@@ -139,7 +139,7 @@ class PackageCore
     {
         $view_path = realpath($this->option['basePath'] . '/../assets');
 
-        if($view_path) {
+        if ($view_path) {
             $this->option['hasAsset'] = true;
         } else {
             throw new AssetFolderNotFoundException($this->name);
@@ -235,7 +235,7 @@ class PackageCore
     }
 
     /**
-     * register dependency publishable in package.
+     * register dependency-publishable in package.
      *
      * @param string $provider
      * @param string|null $group
@@ -245,7 +245,7 @@ class PackageCore
      */
     public function registerDependencyPublishable(string $provider, string $group = null): static
     {
-        if(!class_exists($provider)) {
+        if (!class_exists($provider)) {
             throw new DependencyPublishableClassNotFoundException($this->name, $provider);
         }
 
@@ -261,6 +261,25 @@ class PackageCore
         return $this;
     }
 
+    /**
+     * has console kernel file for scheduling command and job in package.
+     *
+     * @return static
+     * @throws ConsoleKernelFileNotFoundException
+     */
+    public function hasConsoleKernel(): static
+    {
+        $console_kernel_file = is_file($this->option['basePath'] . '/ConsoleKernel.php');
+
+        if ($console_kernel_file) {
+            $this->option['hasConsoleKernel'] = true;
+        } else {
+            throw new ConsoleKernelFileNotFoundException($this->name);
+        }
+
+        return $this;
+    }
+
     public function shortName(): string
     {
         return Str::after($this->name, 'laravel-');
@@ -271,5 +290,23 @@ class PackageCore
         $this->option['basePath'] = $path;
 
         return $this;
+    }
+
+    public function getNamespace(): ?string
+    {
+        $iterator = new DirectoryIterator($this->option['basePath']);
+
+        foreach ($iterator as $fileInfo) {
+            if (!$fileInfo->isDot() && $fileInfo->isFile() && $fileInfo->getExtension() === 'php') {
+                $file_contents = file_get_contents($fileInfo->getPathname());
+
+                $matches = [];
+                if (preg_match('/namespace\s+([^;]+);/i', $file_contents, $matches)) {
+                    return trim($matches[1]);
+                }
+            }
+        }
+
+        return null;
     }
 }

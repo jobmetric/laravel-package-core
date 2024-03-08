@@ -113,6 +113,15 @@ trait EventTrait
     }
 
     /**
+     * console kernel loaded package
+     *
+     * @return void
+     */
+    public function consoleKernelLoadedPackage(): void
+    {
+    }
+
+    /**
      * translations loaded package
      *
      * @return void
