@@ -24,6 +24,18 @@ if (!function_exists('appNamespace')) {
     }
 }
 
+if (!function_exists('appFolderName')) {
+    /**
+     * Get the application folder name for the application.
+     *
+     * @return string
+     */
+    function appFolderName(): string
+    {
+        return basename(app_path());
+    }
+}
+
 if (!function_exists('queryToSql')) {
     /**
      * get full sql query string in query builder
