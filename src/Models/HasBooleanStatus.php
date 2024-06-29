@@ -4,6 +4,12 @@ namespace JobMetric\PackageCore\Models;
 
 use Illuminate\Database\Eloquent\Builder;
 
+/**
+ * JobMetric\PackageCore\Models\HasBooleanStatus
+ *
+ * @method static Builder active()
+ * @method static Builder inactive()
+ */
 trait HasBooleanStatus
 {
     /**
