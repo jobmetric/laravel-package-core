@@ -21,3 +21,5 @@ $users = User::active()->get();
 ```php
 $users = User::inactive()->get();
 ```
+
+- [Has Dynamic Relations](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-dynamic-relations.md)
