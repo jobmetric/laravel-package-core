@@ -9,12 +9,12 @@ trait HasDynamicRelations
     /**
      * Add dynamic relation
      *
-     * @param $name
-     * @param $callback
+     * @param string $name
+     * @param callable $callback
      *
      * @return void
      */
-    public static function addDynamicRelation($name, $callback): void
+    public static function addDynamicRelation(string $name, callable $callback): void
     {
         static::$dynamicRelations[$name] = $callback;
     }
