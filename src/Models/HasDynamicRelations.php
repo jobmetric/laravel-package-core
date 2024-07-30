@@ -1,7 +1,10 @@
 <?php
 
-namespace JobMetric\PackageCore;
+namespace JobMetric\PackageCore\Models;
 
+/**
+ * JobMetric\PackageCore\Models\HasDynamicRelations
+ */
 trait HasDynamicRelations
 {
     protected static array $dynamicRelations = [];

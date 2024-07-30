@@ -13,8 +13,7 @@ Consider the Tag class, which has a taggable field, and now consider the followi
 ```php
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
-use Jobmetric\PackageCore\HasDynamicRelations;
+use Illuminate\Database\Eloquent\Model;use JobMetric\PackageCore\Models\HasDynamicRelations;
 
 class Tag extends Model
 {
