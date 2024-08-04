@@ -12,34 +12,40 @@ trait HasResponse
     /**
      * response json
      *
-     * @param mixed $data
-     * @param string $message
-     * @param int $status
-     *
-     * @return JsonResponse
-     */
-    public function response(mixed $data = [], string $message = '', int $status = 200): JsonResponse
-    {
-        return response()->json([
-            'message' => $message,
-            'data' => $data
-        ], $status);
-    }
-
-    /**
-     * response json with additional
-     *
-     * @param mixed $data
+     * @param array $data
      * @param string|null $message
-     * @param int $status
+     * @param int|null $status
      * @param array $additional
      *
      * @return JsonResponse
      */
-    public function responseWithAdditional(mixed $data = [], string $message = null, int $status = 200, array $additional = []): JsonResponse
+    public function response(array $data = [], string $message = null, int $status = null, array $additional = []): JsonResponse
     {
+        $message = $message ?? $data['message'] ?? '';
+        $status = $status ?? $data['status'] ?? 200;
+
+        return response()->json(array_merge($data, [
+            'message' => $message
+        ], $additional), $status);
+    }
+
+    /**
+     * response collection json
+     *
+     * @param $data
+     * @param string|null $message
+     * @param int|null $status
+     * @param array $additional
+     *
+     * @return JsonResponse
+     */
+    public function responseCollection($data, string $message = null, int $status = null, array $additional = []): JsonResponse
+    {
+        $message = $message ?? $data['message'] ?? '';
+        $status = $status ?? $data['status'] ?? 200;
+
         return $data->additional(array_merge([
-            'message' => $message ?? ''
+            'message' => $message
         ], $additional))->response()->setStatusCode($status);
     }
 }
