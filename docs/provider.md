@@ -108,7 +108,7 @@ This method is employed to register your package's path files. Pay close attenti
 
 Generate your path file, and if you have the specified function in your settings, these file will be executed automatically—making the process seamless.
 
-The routes file should be named 'route.php'.
+The `routes` file should be named `route.php`.
 
 ```php
 $package->hasRoute();
@@ -126,6 +126,22 @@ You can also use the following example inside the package.
 
 ```php
 __('flow::base.flow')
+```
+
+#### hasComponent
+
+This method is used to register the component files of your package.
+
+Pay close attention to your package folder structure and make sure there is a `View/Components` folder to the `src` folder.
+
+Component classes are defined as in the [Laravel document](https://laravel.com/docs/11.x/blade#components).
+
+Preferably, the views you create for the component should be in the `resources/views/components/*` folder.
+
+For example, if you create a component named `button`, the view file should be in the `resources/views/components/button.blade.php` folder.
+
+```php
+$package->hasComponent();
 ```
 
 #### registerCommand

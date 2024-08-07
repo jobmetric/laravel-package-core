@@ -2,6 +2,7 @@
 
 namespace JobMetric\PackageCore;
 
+use Illuminate\Support\Facades\Blade;
 use JobMetric\PackageCore\Enums\RegisterClassTypeEnum;
 use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
@@ -145,10 +146,24 @@ trait ProviderTrait
      */
     public function loadView(): void
     {
-        if (isset($this->package->option['hasView'])) {
+        if (isset($this->package->option['hasView']) || isset($this->package->option['hasComponent'])) {
             $this->loadViewsFrom($this->package->option['basePath'] . '/../resources/views', $this->package->shortName());
 
             $this->viewLoadedPackage();
+        }
+    }
+
+    /**
+     * load component view
+     *
+     * @return void
+     */
+    public function loadComponent(): void
+    {
+        if (isset($this->package->option['hasComponent'])) {
+            Blade::componentNamespace($this->package->getNamespace() . '\\View\\Components', $this->package->shortName());
+
+            $this->componentLoadedPackage();
         }
     }
 

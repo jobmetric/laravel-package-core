@@ -113,6 +113,15 @@ trait EventTrait
     }
 
     /**
+     * component loaded package
+     *
+     * @return void
+     */
+    public function componentLoadedPackage(): void
+    {
+    }
+
+    /**
      * console kernel loaded package
      *
      * @return void

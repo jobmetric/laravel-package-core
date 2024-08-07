@@ -88,6 +88,7 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
             $this->runInTestPackage();
         } else {
             // bootable package in web
+            $this->loadComponent();
 
             $this->runInWebPackage();
         }

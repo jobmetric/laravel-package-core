@@ -149,6 +149,18 @@ class PackageCore
     }
 
     /**
+     * has component file in package.
+     *
+     * @return static
+     */
+    public function hasComponent(): static
+    {
+        $this->option['hasComponent'] = true;
+
+        return $this;
+    }
+
+    /**
      * register class in package.
      *
      * @param string $key
