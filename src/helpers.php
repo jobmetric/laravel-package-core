@@ -64,3 +64,32 @@ if (!function_exists('checkDatabaseConnection')) {
         }
     }
 }
+
+if (!function_exists('shortFormatNumber')) {
+    /**
+     * short format number
+     *
+     * @param string $number
+     * @param int $precision
+     *
+     * @return string
+     */
+    function shortFormatNumber(string $number, int $precision = 1): string
+    {
+        if (!is_numeric($number)) {
+            throw new InvalidArgumentException("Input must be a numeric value.");
+        }
+
+        $number = (float)$number;
+
+        if ($number < 1000) {
+            return $number;
+        }
+
+        $units = ['', 'K', 'M', 'B', 'T', 'P', 'E', 'Z', 'Y'];
+        $power = floor(log($number, 1000));
+        $shortNumber = $number / pow(1000, $power);
+
+        return round($shortNumber, $precision) . $units[$power];
+    }
+}

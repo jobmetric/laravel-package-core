@@ -31,4 +31,15 @@ This method checks the database connection.
 checkDatabaseConnection(); // return true or false
 ```
 
+### shortFormatNumber($number, $precision = 2)
+
+This method returns a short format of a number.
+
+```php
+shortFormatNumber(1000); // return '1K'
+shortFormatNumber(1000000); // return '1M'
+shortFormatNumber(1000000000); // return '1B'
+shortFormatNumber(1000000000000); // return '1T'
+```
+
 - [Next To Boolean Status](https://github.com/jobmetric/laravel-package-core/blob/master/docs/boolean-status.md)
