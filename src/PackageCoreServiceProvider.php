@@ -69,6 +69,15 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
+        // load configuration for package core
+        global $package_core_config;
+        if (!$package_core_config) {
+            $package_core_config = true;
+
+            // load translation
+            $this->loadTranslationsFrom(realpath(__DIR__ . '/../lang'), 'package-core');
+        }
+
         $this->beforeBootPackage();
 
         // bootable package
