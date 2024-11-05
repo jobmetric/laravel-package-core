@@ -32,7 +32,6 @@ return [
     "cards" => [
         "general_info" => "اطلاعات عمومی",
         "proprietary_info" => "اطلاعات اختصاصی",
-        "metadata_info" => "اطلاعات اضافی",
     ],
 
     "select" => [

@@ -32,7 +32,6 @@ return [
     "cards" => [
         "general_info" => "General Information",
         "proprietary_info" => "Proprietary Information",
-        "metadata_info" => "Additional Information",
     ],
 
     "select" => [
