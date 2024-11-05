@@ -2,6 +2,7 @@
 
 namespace JobMetric\PackageCore;
 
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 use JobMetric\PackageCore\Exceptions\AssetFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\BaseConfigFileNotFoundException;
@@ -10,6 +11,7 @@ use JobMetric\PackageCore\Exceptions\ConfigFileNotFoundException;
 use JobMetric\PackageCore\Exceptions\InvalidPackageException;
 use JobMetric\PackageCore\Exceptions\MigrationFolderNotFoundException;
 use JobMetric\PackageCore\Exceptions\ViewFolderNotFoundException;
+use JobMetric\PackageCore\View\Components\BooleanStatus;
 
 abstract class PackageCoreServiceProvider extends ServiceProvider
 {
@@ -41,6 +43,15 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // load configuration for package core
+        global $package_core_config_register;
+        if (!$package_core_config_register) {
+            $package_core_config_register = true;
+
+            // load view
+            $this->loadViewsFrom(realpath(__DIR__ . '/../resources/views'), 'package-core');
+        }
+
         $this->beforeRegisterPackage();
 
         // factory resolver
@@ -70,12 +81,15 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // load configuration for package core
-        global $package_core_config;
-        if (!$package_core_config) {
-            $package_core_config = true;
+        global $package_core_config_boot;
+        if (!$package_core_config_boot) {
+            $package_core_config_boot = true;
 
             // load translation
             $this->loadTranslationsFrom(realpath(__DIR__ . '/../lang'), 'package-core');
+
+            // add alias for components
+            Blade::component(BooleanStatus::class, 'boolean-status');
         }
 
         $this->beforeBootPackage();

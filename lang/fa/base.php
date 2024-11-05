@@ -12,9 +12,32 @@ return [
     |
     */
 
-    'status' => [
-        'enable' => 'فعال',
-        'disable' => 'غیرفعال',
+    "components" => [
+        "boolean_status" => [
+            "label" => "وضعیت",
+            "enable" => "فعال",
+            "disable" => "غیرفعال",
+            "description" => "برای تغییر وضعیت نحوه نمایش از این گزینه استفاده کنید.",
+        ],
+    ],
+
+    "tabs" => [
+        "general" => "عمومی",
+        "options" => "ویژگی‌ها",
+        "layout" => "طراحی صفحه",
+        "basic_info" => "اطلاعات پایه",
+        "seo" => "تنظیمات سئو",
+    ],
+
+    "cards" => [
+        "general_info" => "اطلاعات عمومی",
+        "proprietary_info" => "اطلاعات اختصاصی",
+        "metadata_info" => "اطلاعات اضافی",
+    ],
+
+    "select" => [
+        "none" => "هیچ کدام",
+        "please" => "انتخاب کنید",
     ],
 
 ];
