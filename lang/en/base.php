@@ -25,12 +25,9 @@ return [
         "general" => "General",
         "options" => "Options",
         "layout" => "Layout",
-        "basic_info" => "Basic Information",
-        "seo" => "SEO Settings",
     ],
 
     "cards" => [
-        "general_info" => "General Information",
         "proprietary_info" => "Proprietary Information",
     ],
 

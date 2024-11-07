@@ -25,12 +25,9 @@ return [
         "general" => "عمومی",
         "options" => "ویژگی‌ها",
         "layout" => "طراحی صفحه",
-        "basic_info" => "اطلاعات پایه",
-        "seo" => "تنظیمات سئو",
     ],
 
     "cards" => [
-        "general_info" => "اطلاعات عمومی",
         "proprietary_info" => "اطلاعات اختصاصی",
     ],
 
