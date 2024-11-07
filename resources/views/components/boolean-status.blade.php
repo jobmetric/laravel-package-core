@@ -7,8 +7,8 @@
     </div>
     <div class="card-body pt-0">
         <select name="status" class="form-select" data-control="select2" data-hide-search="true">
-            <option value="1" @if($value == '1') selected @endif>{{ trans('package-core::base.components.boolean_status.enable') }}</option>
-            <option value="0" @if($value == '0') selected @endif>{{ trans('package-core::base.components.boolean_status.disable') }}</option>
+            <option value="1" @if((bool)$value === true) selected @endif>{{ trans('package-core::base.components.boolean_status.enable') }}</option>
+            <option value="0" @if((bool)$value === false) selected @endif>{{ trans('package-core::base.components.boolean_status.disable') }}</option>
         </select>
         @error('status')
         <div class="form-errors text-danger fs-7 mt-2">{{ $message }}</div>
