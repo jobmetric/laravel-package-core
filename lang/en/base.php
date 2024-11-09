@@ -36,4 +36,6 @@ return [
         "please" => "Please select",
     ],
 
+    "undefined_in_this_language" => "(Undefined, edit it)",
+
 ];

@@ -36,4 +36,6 @@ return [
         "please" => "انتخاب کنید",
     ],
 
+    "undefined_in_this_language" => "(تعریف نشده، ویرایش شود)",
+
 ];
