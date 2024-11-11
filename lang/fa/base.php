@@ -25,6 +25,7 @@ return [
         "general" => "عمومی",
         "options" => "ویژگی‌ها",
         "layout" => "طراحی صفحه",
+        "connections" => "اتصالات",
     ],
 
     "cards" => [
@@ -37,5 +38,10 @@ return [
     ],
 
     "undefined_in_this_language" => "(تعریف نشده، ویرایش شود)",
+
+    "fields" => [
+        "created_at" => 'تاریخ ایجاد',
+        "updated_at" => 'تاریخ بروزرسانی',
+    ],
 
 ];

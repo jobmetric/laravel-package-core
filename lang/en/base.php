@@ -25,6 +25,7 @@ return [
         "general" => "General",
         "options" => "Options",
         "layout" => "Layout",
+        "connections" => "Connections",
     ],
 
     "cards" => [
@@ -37,5 +38,10 @@ return [
     ],
 
     "undefined_in_this_language" => "(Undefined, edit it)",
+
+    "fields" => [
+        "created_at" => 'Created At',
+        "updated_at" => 'Updated At',
+    ],
 
 ];
