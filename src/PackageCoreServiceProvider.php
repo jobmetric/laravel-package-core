@@ -85,6 +85,11 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
         if (!$package_core_config_boot) {
             $package_core_config_boot = true;
 
+            // register assets
+            $this->publishes([
+                realpath(__DIR__ . '/../assets') => public_path('assets/vendor/package-core')
+            ], ['package-core', 'package-core-assets']);
+
             // load translation
             $this->loadTranslationsFrom(realpath(__DIR__ . '/../lang'), 'package-core');
 
