@@ -40,8 +40,14 @@ return [
     "undefined_in_this_language" => "(Undefined, edit it)",
 
     "fields" => [
-        "created_at" => 'Created At',
-        "updated_at" => 'Updated At',
+        "created_at" => "Created At",
+        "updated_at" => "Updated At",
+    ],
+
+    "list" => [
+        "columns" => [
+            "translations" => "Translations",
+        ],
     ],
 
 ];
