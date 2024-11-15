@@ -46,7 +46,12 @@ return [
 
     "list" => [
         "columns" => [
+            "image" => "Image",
+            "name" => "Name",
             "translations" => "Translations",
+            "status" => "Status",
+            "ordering" => "Ordering",
+            "action" => "Action",
         ],
     ],
 

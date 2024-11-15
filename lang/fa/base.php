@@ -46,7 +46,12 @@ return [
 
     "list" => [
         "columns" => [
+            "image" => "عکس",
+            "name" => "نام",
             "translations" => "ترجمه‌ها",
+            "status" => "وضعیت",
+            "ordering" => "ترتیب",
+            "action" => "عملیات",
         ],
     ],
 
