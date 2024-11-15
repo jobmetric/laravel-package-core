@@ -1,5 +1,5 @@
 function datatableColumnShowDetailsList(e) {
-    return `<a href="javascript:void(0)" class="btn btn-usm btn-dark btn-icon btn-circle show-details">
+    return `<a href="javascript:void(0)" class="btn btn-usm btn-dark btn-icon btn-circle" onclick="show_details_list_object(this)">
                 <i class="la la-plus fs-5"></i>
             </a>`
 }
@@ -27,4 +27,28 @@ function datatableColumnStatusList(e) {
 
 function datatableColumnOrderingList(e) {
     return `<div class="align-center text-gray-800">${e.ordering}</div>`
+}
+
+const show_details_list_object = function(element){
+    const tr = $(element).closest('tr')
+    const row = dt.row(tr)
+    const icon = $(element).find('i')
+
+    dt.rows().every(function () {
+        if (this.child.isShown() && this.index() !== row.index()) {
+            this.child.hide();
+            $(this.node()).removeClass('shown');
+            $(this.node()).find('i').removeClass('la-minus').addClass('la-plus')
+        }
+    })
+
+    if (row.child.isShown()) {
+        row.child.hide();
+        tr.removeClass('shown');
+        icon.removeClass('la-minus').addClass('la-plus')
+    } else {
+        row.child(listShowDetails(row.data())).show();
+        tr.addClass('shown');
+        icon.removeClass('la-plus').addClass('la-minus')
+    }
 }
