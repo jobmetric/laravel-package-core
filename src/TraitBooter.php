@@ -9,17 +9,25 @@ trait TraitBooter
      *
      * @return void
      */
-    protected static function boot(): void
+    protected function boot(): void
     {
         static::beforeBoot();
 
         $class = static::class;
 
         foreach (class_uses_recursive($class) as $trait) {
-            $method = 'boot' . class_basename($trait);
+            // Build method names based on the trait name
+            $staticMethod = 'staticBoot' . class_basename($trait);
+            $nonStaticMethod = 'boot' . class_basename($trait);
 
-            if (method_exists($class, $method)) {
-                forward_static_call([$class, $method]);
+            // Call the static method if it exists
+            if (method_exists($class, $staticMethod)) {
+                forward_static_call([$class, $staticMethod]);
+            }
+
+            // Call the non-static method if it exists
+            if (method_exists($class, $nonStaticMethod)) {
+                $this->{$nonStaticMethod}();
             }
         }
 
@@ -31,7 +39,7 @@ trait TraitBooter
      *
      * @return void
      */
-    protected static function beforeBoot(): void
+    protected function beforeBoot(): void
     {
         //
     }
@@ -41,7 +49,8 @@ trait TraitBooter
      *
      * @return void
      */
-    protected static function afterBoot(): void
+    protected function afterBoot(): void
     {
+        //
     }
 }
