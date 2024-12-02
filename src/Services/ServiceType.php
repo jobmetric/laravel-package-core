@@ -4,10 +4,13 @@ namespace JobMetric\PackageCore\Services;
 
 use Illuminate\Contracts\Foundation\Application;
 use JobMetric\PackageCore\Exceptions\ServiceTypeTypeNotFoundException;
+use JobMetric\PackageCore\TraitBooter;
 use Throwable;
 
 abstract class ServiceType
 {
+    use TraitBooter;
+
     /**
      * The type of the service.
      *
@@ -74,6 +77,8 @@ abstract class ServiceType
         $types = $this->getInContainer();
         $types[$type] = [];
         $this->setInContainer($types);
+
+        $this->boot();
 
         return $this;
     }
