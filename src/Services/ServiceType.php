@@ -2,7 +2,6 @@
 
 namespace JobMetric\PackageCore\Services;
 
-use Illuminate\Contracts\Foundation\Application;
 use JobMetric\PackageCore\Exceptions\ServiceTypeTypeNotFoundException;
 use JobMetric\PackageCore\TraitBooter;
 use Throwable;
@@ -18,25 +17,6 @@ abstract class ServiceType
      */
     protected ?string $type = null;
 
-    /**
-     * The application instance.
-     *
-     * @var Application
-     */
-    protected Application $app;
-
-    /**
-     * Create a new Translation instance.
-     *
-     * @param Application $app
-     *
-     * @return void
-     */
-    public function __construct(Application $app)
-    {
-        $this->app = $app;
-    }
-
     abstract protected function serviceType(): string;
 
     /**
@@ -48,7 +28,7 @@ abstract class ServiceType
      */
     protected function setInContainer(array $params = []): void
     {
-        $this->app->singleton($this->serviceType(), function () use ($params) {
+        app()->singleton($this->serviceType(), function () use ($params) {
             return $params;
         });
     }
