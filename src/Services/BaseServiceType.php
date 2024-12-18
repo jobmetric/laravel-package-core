@@ -25,11 +25,11 @@ trait BaseServiceType
     /**
      * Has type in types
      *
-     * @param string $type
+     * @param string|null $type
      *
      * @return bool
      */
-    public function hasType(string $type): bool
+    public function hasType(string|null $type): bool
     {
         return in_array($type, $this->getTypes());
     }
@@ -37,12 +37,12 @@ trait BaseServiceType
     /**
      * Check type in types
      *
-     * @param string $type
+     * @param string|null $type
      *
      * @return void
      * @throws Throwable
      */
-    public function checkType(string $type): void
+    public function checkType(string|null $type): void
     {
         if (!$this->hasType($type)) {
             throw new ServiceTypeTypeNotMatchException(static::class, $type);
