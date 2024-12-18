@@ -93,3 +93,21 @@ if (!function_exists('shortFormatNumber')) {
         return round($shortNumber, $precision) . $units[$power];
     }
 }
+
+if (!function_exists('getServiceTypeClass')) {
+    /**
+     * get service type class
+     *
+     * @param string $className
+     *
+     * @return mixed
+     */
+    function getServiceTypeClass(string $className): mixed
+    {
+        $className = explode("\\", $className);
+        $className = end($className);
+        $typeClass = "{$className}Type";
+
+        return app($typeClass);
+    }
+}
