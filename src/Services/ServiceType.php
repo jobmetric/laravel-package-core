@@ -28,6 +28,14 @@ abstract class ServiceType
      */
     protected function setInContainer(array $params = []): void
     {
+        if (!app()->bound($this->serviceType())) {
+            app()->singleton($this->serviceType(), function () use ($params) {
+                return $params;
+            });
+
+            return;
+        }
+
         app()->singleton($this->serviceType(), function () use ($params) {
             return $params;
         });
@@ -40,6 +48,12 @@ abstract class ServiceType
      */
     protected function getInContainer(): array
     {
+        if (!app()->bound($this->serviceType())) {
+            app()->singleton($this->serviceType(), function () {
+                return [];
+            });
+        }
+
         return app($this->serviceType());
     }
 
