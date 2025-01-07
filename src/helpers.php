@@ -3,6 +3,7 @@
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 
 if (!function_exists('appNamespace')) {
     /**
@@ -109,5 +110,40 @@ if (!function_exists('getServiceTypeClass')) {
         $typeClass = "{$className}Type";
 
         return app($typeClass);
+    }
+}
+
+if (!function_exists('getDriverNames')) {
+    /**
+     * get driver names
+     *
+     * @param array  $namespaces
+     * @param string $suffix
+     *
+     * @return array
+     */
+    function getDriverNames(array $namespaces, string $suffix = ''): array
+    {
+        $result = [];
+
+        foreach ($namespaces as $namespace) {
+            $path = base_path(str_replace('\\', DIRECTORY_SEPARATOR, $namespace));
+
+            if (File::exists($path)) {
+                $files = File::allFiles($path);
+
+                foreach ($files as $file) {
+                    if ($file->getExtension() === 'php') {
+                        $filename = $file->getFilenameWithoutExtension();
+
+                        if ($suffix === '' || str_ends_with($filename, $suffix)) {
+                            $result[] = $namespace . '\\' . $filename;
+                        }
+                    }
+                }
+            }
+        }
+
+        return $result;
     }
 }
