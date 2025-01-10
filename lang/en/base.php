@@ -12,12 +12,20 @@ return [
     |
     */
 
+    "validation" => [
+        "errors" => "Validation error occurred.",
+    ],
+
     "components" => [
         "boolean_status" => [
             "label" => "Status",
             "enable" => "Enable",
             "disable" => "Disable",
             "description" => "Use this option to change the display mode.",
+        ],
+        "default" => [
+            "enable" => "Default",
+            "disable" => "Disable",
         ],
     ],
 
@@ -51,6 +59,8 @@ return [
             "translations" => "Translations",
             "status" => "Status",
             "ordering" => "Ordering",
+            "default" => "Default",
+            "driver" => "Driver",
             "action" => "Action",
         ],
     ],

@@ -12,12 +12,20 @@ return [
     |
     */
 
+    "validation" => [
+        "errors" => "خطای اعتبارسنجی رخ داده است.",
+    ],
+
     "components" => [
         "boolean_status" => [
             "label" => "وضعیت",
             "enable" => "فعال",
             "disable" => "غیرفعال",
             "description" => "برای تغییر وضعیت نحوه نمایش از این گزینه استفاده کنید.",
+        ],
+        "default" => [
+            "enable" => "پیش فرض",
+            "disable" => "غیرفعال",
         ],
     ],
 
@@ -51,6 +59,8 @@ return [
             "translations" => "ترجمه‌ها",
             "status" => "وضعیت",
             "ordering" => "ترتیب",
+            "default" => "پیش فرض",
+            "driver" => "درایور",
             "action" => "عملیات",
         ],
     ],
