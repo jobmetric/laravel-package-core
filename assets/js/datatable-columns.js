@@ -52,3 +52,17 @@ const show_details_list_object = function(element){
         icon.removeClass('la-plus').addClass('la-minus')
     }
 }
+
+function datatableColumnDefaultList(e) {
+    let text = `<div class="align-center">`
+
+    if (e.default) {
+        text += `<div class="badge badge-light-success">${localize.language.package_core.components.default.enable}</div>`
+    } else {
+        text += `<div class="badge badge-light-danger">${localize.language.package_core.components.default.disable}</div>`
+    }
+
+    text += `</div>`
+
+    return text
+}
