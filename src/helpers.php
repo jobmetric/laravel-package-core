@@ -113,6 +113,60 @@ if (!function_exists('getServiceTypeClass')) {
     }
 }
 
+if (!function_exists('resolveNamespacePath')) {
+    /**
+     * Resolve the file system path of a given namespace.
+     *
+     * @param string $namespace
+     * @return string|null
+     */
+    function resolveNamespacePath(string $namespace): ?string
+    {
+        $composerJsonPath = base_path('composer.json');
+
+        if (!file_exists($composerJsonPath)) {
+            return null;
+        }
+
+        $composerData = json_decode(file_get_contents($composerJsonPath), true);
+        $psr4Mappings = array_merge(
+            $composerData['autoload']['psr-4'] ?? [],
+            $composerData['autoload-dev']['psr-4'] ?? []
+        );
+
+        // چک کردن در مسیر پروژه
+        foreach ($psr4Mappings as $prefix => $path) {
+            if (str_starts_with($namespace, trim($prefix, '\\'))) {
+                $relativeNamespace = str_replace($prefix, '', $namespace);
+                $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
+
+                return base_path(trim($path, '/') . '/' . $relativePath);
+            }
+        }
+
+        $composerVendorPath = base_path('vendor/composer/autoload_psr4.php');
+        if (file_exists($composerVendorPath)) {
+            $vendorPsr4Mappings = include $composerVendorPath;
+
+            foreach ($vendorPsr4Mappings as $prefix => $paths) {
+                if (str_starts_with($namespace, trim($prefix, '\\'))) {
+                    $relativeNamespace = str_replace($prefix, '', $namespace);
+                    $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
+
+                    foreach ((array) $paths as $vendorPath) {
+                        $fullPath = rtrim($vendorPath, '/') . '/' . $relativePath;
+                        if (file_exists($fullPath)) {
+                            return $fullPath;
+                        }
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+}
+
 if (!function_exists('getDriverNames')) {
     /**
      * get driver names
@@ -127,9 +181,10 @@ if (!function_exists('getDriverNames')) {
         $result = [];
 
         foreach ($namespaces as $namespace) {
-            $path = base_path(str_replace('\\', DIRECTORY_SEPARATOR, $namespace));
+            // Resolve the base path for the namespace
+            $path = resolveNamespacePath($namespace);
 
-            if (File::exists($path)) {
+            if ($path && File::exists($path)) {
                 $files = File::allFiles($path);
 
                 foreach ($files as $file) {
@@ -137,7 +192,7 @@ if (!function_exists('getDriverNames')) {
                         $filename = $file->getFilenameWithoutExtension();
 
                         if ($suffix === '' || str_ends_with($filename, $suffix)) {
-                            $result[] = $namespace . '\\' . $filename;
+                            $result[] = rtrim($namespace, '\\') . '\\' . $filename;
                         }
                     }
                 }
