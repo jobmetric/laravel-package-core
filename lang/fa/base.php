@@ -54,6 +54,8 @@ return [
 
     "list" => [
         "columns" => [
+            "id" => "شناسه",
+            "user" => "کاربر",
             "image" => "عکس",
             "name" => "نام",
             "translations" => "ترجمه‌ها",
@@ -63,6 +65,10 @@ return [
             "driver" => "درایور",
             "action" => "عملیات",
         ],
+    ],
+
+    "badge" => [
+        "undefined" => "تعریف نشده",
     ],
 
 ];

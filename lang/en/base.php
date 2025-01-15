@@ -54,6 +54,8 @@ return [
 
     "list" => [
         "columns" => [
+            "id" => "ID",
+            "user" => "User",
             "image" => "Image",
             "name" => "Name",
             "translations" => "Translations",
@@ -63,6 +65,10 @@ return [
             "driver" => "Driver",
             "action" => "Action",
         ],
+    ],
+
+    "badge" => [
+        "undefined" => "Undefined",
     ],
 
 ];
