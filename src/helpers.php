@@ -134,7 +134,6 @@ if (!function_exists('resolveNamespacePath')) {
             $composerData['autoload-dev']['psr-4'] ?? []
         );
 
-        // چک کردن در مسیر پروژه
         foreach ($psr4Mappings as $prefix => $path) {
             if (str_starts_with($namespace, trim($prefix, '\\'))) {
                 $relativeNamespace = str_replace($prefix, '', $namespace);
