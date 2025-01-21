@@ -139,7 +139,7 @@ if (!function_exists('resolveNamespacePath')) {
                 $relativeNamespace = str_replace($prefix, '', $namespace);
                 $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
 
-                return base_path(trim($path, '/') . '/' . $relativePath);
+                return str_replace('/', DIRECTORY_SEPARATOR, base_path(trim($path, '/') . DIRECTORY_SEPARATOR . $relativePath));
             }
         }
 
@@ -153,7 +153,8 @@ if (!function_exists('resolveNamespacePath')) {
                     $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
 
                     foreach ((array) $paths as $vendorPath) {
-                        $fullPath = rtrim($vendorPath, '/') . '/' . $relativePath;
+                        $fullPath = rtrim($vendorPath, '/') . DIRECTORY_SEPARATOR . $relativePath;
+                        $fullPath = str_replace('/', DIRECTORY_SEPARATOR, $fullPath);
                         if (file_exists($fullPath)) {
                             return $fullPath;
                         }
