@@ -38,6 +38,7 @@ return [
 
     "cards" => [
         "proprietary_info" => "Proprietary Information",
+        "fields" => "Fields",
     ],
 
     "select" => [

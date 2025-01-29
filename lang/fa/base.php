@@ -38,6 +38,7 @@ return [
 
     "cards" => [
         "proprietary_info" => "اطلاعات اختصاصی",
+        "fields" => "فیلدها",
     ],
 
     "select" => [
