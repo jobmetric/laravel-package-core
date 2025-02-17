@@ -61,6 +61,7 @@ return [
             "name" => "نام",
             "translations" => "ترجمه‌ها",
             "status" => "وضعیت",
+            "plugin" => "پلاگین",
             "ordering" => "ترتیب",
             "default" => "پیش فرض",
             "driver" => "درایور",

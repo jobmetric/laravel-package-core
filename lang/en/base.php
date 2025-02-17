@@ -61,6 +61,7 @@ return [
             "name" => "Name",
             "translations" => "Translations",
             "status" => "Status",
+            "plugin" => "Plugin",
             "ordering" => "Ordering",
             "default" => "Default",
             "driver" => "Driver",
