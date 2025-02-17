@@ -29,6 +29,10 @@ function datatableColumnOrderingList(e) {
     return `<div class="align-center text-gray-800">${e.ordering}</div>`
 }
 
+function datatableColumnPluginList(e) {
+    return `<div class="align-center text-gray-800">${e.plugin?.name}</div>`
+}
+
 const show_details_list_object = function(element){
     const tr = $(element).closest('tr')
     const row = dt.row(tr)
