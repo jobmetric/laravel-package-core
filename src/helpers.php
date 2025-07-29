@@ -2,6 +2,7 @@
 
 use Illuminate\Container\Container;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 
@@ -200,5 +201,24 @@ if (!function_exists('getDriverNames')) {
         }
 
         return $result;
+    }
+}
+
+if (!function_exists('loadMigrationPath')) {
+    /**
+     * Load migrations from a specified path.
+     *
+     * @param string $path
+     *
+     * @return void
+     */
+    function loadMigrationPath(string $path): void
+    {
+        foreach (glob($path . '/*.php') as $file) {
+            $migration = include $file;
+            if ($migration instanceof Migration) {
+                $migration->up();
+            }
+        }
     }
 }
