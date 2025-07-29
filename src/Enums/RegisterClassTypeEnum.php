@@ -10,7 +10,7 @@ namespace JobMetric\PackageCore\Enums;
  */
 enum RegisterClassTypeEnum: string
 {
-    use EnumToArray;
+    use EnumMacros;
 
     case BIND = "bind";
     case SINGLETON = "singleton";
