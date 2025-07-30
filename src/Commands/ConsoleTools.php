@@ -91,9 +91,47 @@ trait ConsoleTools
             case 'error':
                 $this->line("  <bg=red;options=bold> ERROR </> " . $message);
                 break;
+            case 'warning':
+                $this->line("  <bg=yellow;options=bold> WARNING </> " . $message);
+                break;
             case'success':
                 $this->line("  <bg=green;options=bold> SUCCESS </> " . $message);
         }
         $this->newLine();
     }
+
+    /**
+     * Outputs stylized text to the console using ANSI color and formatting.
+     * Returns the formatted string using Symfony Console color and style tags.
+     *
+     * Note:
+     * - You can combine multiple styles using a comma: e.g., `bold,underscore`.
+     *
+     * @param string $text The message text to be displayed in the console.
+     * @param string $color Foreground color (defaults to 'white').
+     * Supported colors:
+     *  - black
+     *  - red
+     *  - green
+     *  - yellow
+     *  - blue
+     *  - magenta
+     *  - cyan
+     *  - white
+     *  - default
+     * @param string $style Text style or styles separated by comma (defaults to 'bold').
+     * Supported styles (options):
+     *  - bold
+     *  - underscore
+     *  - reverse
+     *  - blink
+     *  - concealed
+     *
+     * @return string
+     */
+    public function writeText(string $text, string $color = 'default', string $style = 'bold'): string
+    {
+        return "<fg={$color};options={$style}>$text</>";
+    }
+
 }
