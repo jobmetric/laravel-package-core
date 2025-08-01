@@ -222,3 +222,26 @@ if (!function_exists('loadMigrationPath')) {
         }
     }
 }
+
+if (!function_exists('hasPropertyInClass')) {
+    /**
+     * Check if a class has a specific property defined in its own class scope.
+     *
+     * @param mixed $object
+     * @param string $property
+     *
+     * @return bool
+     * @throws Throwable
+     */
+    function hasPropertyInClass(mixed $object, string $property): bool
+    {
+        $reflection = new ReflectionClass($object);
+
+        if ($reflection->hasProperty($property)) {
+            $declaringClass = $reflection->getProperty($property)->getDeclaringClass()->getName();
+            return $declaringClass === $reflection->getName();
+        }
+
+        return false;
+    }
+}
