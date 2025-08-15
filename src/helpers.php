@@ -5,6 +5,8 @@ use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
+use Illuminate\Support\Facades\Validator;
+use JobMetric\PackageCore\Output\Response;
 
 if (!function_exists('appNamespace')) {
     /**
@@ -153,7 +155,7 @@ if (!function_exists('resolveNamespacePath')) {
                     $relativeNamespace = str_replace($prefix, '', $namespace);
                     $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
 
-                    foreach ((array) $paths as $vendorPath) {
+                    foreach ((array)$paths as $vendorPath) {
                         $fullPath = rtrim($vendorPath, '/') . DIRECTORY_SEPARATOR . $relativePath;
                         $fullPath = str_replace('/', DIRECTORY_SEPARATOR, $fullPath);
                         if (file_exists($fullPath)) {
@@ -172,7 +174,7 @@ if (!function_exists('getDriverNames')) {
     /**
      * get driver names
      *
-     * @param array  $namespaces
+     * @param array $namespaces
      * @param string $suffix
      *
      * @return array
@@ -243,5 +245,85 @@ if (!function_exists('hasPropertyInClass')) {
         }
 
         return false;
+    }
+}
+
+if (!function_exists('dto')) {
+    /**
+     * Validate an input array against a FormRequest-like class.
+     *
+     * @param array $input Raw input
+     * @param string $requestClass Class name that provides rules() and optional normalize(array): array
+     *
+     * @return Response|array      Response on failure, validated array on success
+     */
+    function dto(array $input, string $requestClass): Response|array
+    {
+        // Apply optional static normalize() if exists (to mimic prepareForValidation)
+        if (method_exists($requestClass, 'normalize')) {
+            /** @var callable $normalizer */
+            $normalizer = [$requestClass, 'normalize'];
+            $input = $normalizer($input);
+        }
+
+        $validator = Validator::make($input, (new $requestClass)->rules());
+
+        if ($validator->fails()) {
+            $errors = $validator->errors()->all();
+
+            return Response::make(false, trans('package-core::base.validation.errors'), status: 422, errors: $errors);
+        }
+
+        return $validator->validated();
+    }
+}
+
+if (!function_exists('dtoMany')) {
+    /**
+     * Validate a list of input arrays against a FormRequest-like class.
+     *
+     * Each item MUST be a raw payload array. The $requestClass must expose `rules()`
+     * and may optionally expose a static `normalize(array): array`.
+     *
+     * On success, returns an array of validated arrays (same order as input).
+     * If any item fails, returns a single Response (422) with aggregated errors.
+     *
+     * @param array<int, array<string,mixed>> $items
+     * @param class-string $requestClass FormRequest-like class name
+     * @return Response|array<int, array<string,mixed>>
+     */
+    function dtoMany(array $items, string $requestClass): Response|array
+    {
+        $validated = [];
+        $flatErrors = [];
+
+        foreach ($items as $index => $item) {
+            if (!is_array($item)) {
+                $flatErrors[] = "Item #{$index} is not an array.";
+                continue;
+            }
+
+            $result = dto($item, $requestClass);
+
+            if ($result instanceof Response) {
+                $errs = $result->errors ?? [];
+                if (is_array($errs)) {
+                    foreach ($errs as $msg) {
+                        $flatErrors[] = "[#{$index}] {$msg}";
+                    }
+                } else {
+                    $flatErrors[] = "[#{$index}] Validation failed.";
+                }
+                continue;
+            }
+
+            $validated[$index] = $result; // keep original order/keys
+        }
+
+        if (!empty($flatErrors)) {
+            return Response::make(false, trans('package-core::base.validation.errors'), status: 422, errors: $flatErrors);
+        }
+
+        return $validated;
     }
 }
