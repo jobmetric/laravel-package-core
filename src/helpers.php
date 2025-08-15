@@ -250,23 +250,36 @@ if (!function_exists('hasPropertyInClass')) {
 
 if (!function_exists('dto')) {
     /**
-     * Validate an input array against a FormRequest-like class.
+     * Validate an input array against a Request-like class with optional context.
+     *
+     * The request class may define:
+     * - public static function normalize(array $data, array $ctx = []): array
+     * - public static function rulesFor(array $data, array $ctx = []): array
+     * - public static function attributes(): array
      *
      * @param array $input Raw input
-     * @param string $requestClass Class name that provides rules() and optional normalize(array): array
+     * @param string $requestClass FormRequest-like class
+     * @param array $context Extra parameters needed to build rules (e.g., language_id)
      *
-     * @return Response|array      Response on failure, validated array on success
+     * @return Response|array      Response(422) on failure, validated array on success
      */
-    function dto(array $input, string $requestClass): Response|array
+    function dto(array $input, string $requestClass, array $context = []): Response|array
     {
-        // Apply optional static normalize() if exists (to mimic prepareForValidation)
+        // Normalize input if provided
         if (method_exists($requestClass, 'normalize')) {
-            /** @var callable $normalizer */
-            $normalizer = [$requestClass, 'normalize'];
-            $input = $normalizer($input);
+            $input = $requestClass::normalize($input, $context);
         }
 
-        $validator = Validator::make($input, (new $requestClass)->rules());
+        // Build rules (prefer rulesFor over rules)
+        if (method_exists($requestClass, 'rulesFor')) {
+            $rules = $requestClass::rulesFor($input, $context);
+        } else {
+            $rules = (new $requestClass)->rules();
+        }
+
+        $attributes = method_exists($requestClass, 'attributes') ? $requestClass::attributes() : [];
+
+        $validator = Validator::make($input, $rules, [], $attributes);
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -280,44 +293,37 @@ if (!function_exists('dto')) {
 
 if (!function_exists('dtoMany')) {
     /**
-     * Validate a list of input arrays against a FormRequest-like class.
-     *
-     * Each item MUST be a raw payload array. The $requestClass must expose `rules()`
-     * and may optionally expose a static `normalize(array): array`.
-     *
-     * On success, returns an array of validated arrays (same order as input).
-     * If any item fails, returns a single Response (422) with aggregated errors.
+     * Validate a list of input arrays against a Request-like class with optional per-item context.
      *
      * @param array<int, array<string,mixed>> $items
-     * @param class-string $requestClass FormRequest-like class name
+     * @param string $requestClass
+     * @param array<string,mixed>|callable(array,int):array $context Either a fixed context array or a callback
+     *
      * @return Response|array<int, array<string,mixed>>
      */
-    function dtoMany(array $items, string $requestClass): Response|array
+    function dtoMany(array $items, string $requestClass, array|callable $context = []): Response|array
     {
         $validated = [];
         $flatErrors = [];
 
-        foreach ($items as $index => $item) {
-            if (!is_array($item)) {
-                $flatErrors[] = "Item #{$index} is not an array.";
-                continue;
-            }
+        foreach ($items as $i => $item) {
+            $ctx = is_callable($context) ? $context($item, $i) : $context;
 
-            $result = dto($item, $requestClass);
+            $res = dto($item, $requestClass, $ctx);
 
-            if ($result instanceof Response) {
-                $errs = $result->errors ?? [];
+            if ($res instanceof Response) {
+                $errs = $res->errors ?? [];
                 if (is_array($errs)) {
                     foreach ($errs as $msg) {
-                        $flatErrors[] = "[#{$index}] {$msg}";
+                        $flatErrors[] = "[#{$i}] {$msg}";
                     }
                 } else {
-                    $flatErrors[] = "[#{$index}] Validation failed.";
+                    $flatErrors[] = "[#{$i}] Validation failed.";
                 }
                 continue;
             }
 
-            $validated[$index] = $result; // keep original order/keys
+            $validated[$i] = $res;
         }
 
         if (!empty($flatErrors)) {
