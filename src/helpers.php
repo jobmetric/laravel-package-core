@@ -250,36 +250,44 @@ if (!function_exists('hasPropertyInClass')) {
 
 if (!function_exists('dto')) {
     /**
-     * Validate an input array against a Request-like class with optional context.
+     * Validate an input array against a Request-like class.
      *
-     * The request class may define:
-     * - public static function normalize(array $data, array $ctx = []): array
-     * - public static function rulesFor(array $data, array $ctx = []): array
-     * - public static function attributes(): array
+     * This helper keeps things simple:
+     * - Prefer static normalize($data, $context) when available (pure input normalization).
+     * - Prefer static rulesFor($input, $context) when available; otherwise fallback to instance rules().
+     * - Read messages()/attributes() from the instance when available.
+     * - Call withValidator($validator) on the instance when available.
      *
-     * @param array $input Raw input
-     * @param string $requestClass FormRequest-like class
-     * @param array $context Extra parameters needed to build rules (e.g., language_id)
+     * No container resolution, no HTTP lifecycle, no prepareForValidation(). Pure and predictable.
      *
-     * @return Response|array      Response(422) on failure, validated array on success
+     * @param array<string,mixed> $input Raw input data to validate.
+     * @param class-string $requestClass Fully-qualified class name of the Request-like validator.
+     * @param array<string,mixed> $context Optional context passed to static normalize/rulesFor.
+     *
+     * @return Response|array<string,mixed> On success, returns validated data array. On failure, returns a Response with errors.
      */
     function dto(array $input, string $requestClass, array $context = []): Response|array
     {
-        // Normalize input if provided
         if (method_exists($requestClass, 'normalize')) {
             $input = $requestClass::normalize($input, $context);
         }
 
-        // Build rules (prefer rulesFor over rules)
+        $request = new $requestClass;
+
         if (method_exists($requestClass, 'rulesFor')) {
             $rules = $requestClass::rulesFor($input, $context);
         } else {
-            $rules = (new $requestClass)->rules();
+            $rules = method_exists($request, 'rules') ? $request->rules() : [];
         }
 
-        $attributes = method_exists($requestClass, 'attributes') ? $requestClass::attributes() : [];
+        $messages = method_exists($request, 'messages') ? $request->messages() : [];
+        $attributes = method_exists($request, 'attributes') ? $request->attributes() : [];
 
-        $validator = Validator::make($input, $rules, [], $attributes);
+        $validator = Validator::make($input, $rules, $messages, $attributes);
+
+        if (method_exists($request, 'withValidator')) {
+            $request->withValidator($validator);
+        }
 
         if ($validator->fails()) {
             $errors = $validator->errors()->all();
@@ -293,13 +301,15 @@ if (!function_exists('dto')) {
 
 if (!function_exists('dtoMany')) {
     /**
-     * Validate a list of input arrays against a Request-like class with optional per-item context.
+     * Validate multiple input arrays with the same Request-like class.
      *
-     * @param array<int, array<string,mixed>> $items
-     * @param string $requestClass
-     * @param array<string,mixed>|callable(array,int):array $context Either a fixed context array or a callback
+     * On any failures, flattens errors with item index and returns a single Response.
      *
-     * @return Response|array<int, array<string,mixed>>
+     * @param array<int,array<string,mixed>> $items List of raw input items.
+     * @param class-string $requestClass Request-like class for validation.
+     * @param array<string,mixed>|callable(array,int):array $context Fixed context or a per-item context factory.
+     *
+     * @return Response|array<int,array<string,mixed>> Validated list or a Response with aggregated errors.
      */
     function dtoMany(array $items, string $requestClass, array|callable $context = []): Response|array
     {
@@ -312,13 +322,9 @@ if (!function_exists('dtoMany')) {
             $res = dto($item, $requestClass, $ctx);
 
             if ($res instanceof Response) {
-                $errs = $res->errors ?? [];
-                if (is_array($errs)) {
-                    foreach ($errs as $msg) {
-                        $flatErrors[] = "[#{$i}] {$msg}";
-                    }
-                } else {
-                    $flatErrors[] = "[#{$i}] Validation failed.";
+                $errs = is_array($res->errors ?? null) ? $res->errors : ['Validation failed.'];
+                foreach ($errs as $msg) {
+                    $flatErrors[] = "[#{$i}] {$msg}";
                 }
                 continue;
             }
@@ -326,7 +332,7 @@ if (!function_exists('dtoMany')) {
             $validated[$i] = $res;
         }
 
-        if (!empty($flatErrors)) {
+        if ($flatErrors) {
             return Response::make(false, trans('package-core::base.validation.errors'), status: 422, errors: $flatErrors);
         }
 
