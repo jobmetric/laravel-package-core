@@ -465,8 +465,3 @@ A: Use `context` (e.g., `admin.detail`) and `hints` (e.g., `tenant_id`, `environ
 
 **Q: Should I cache the output?**  
 A: For hot paths, you can cache per subject/version/context. Provide `cacheable`/`cache_ttl` hints and implement caching inside listeners.
-
----
-
-## License
-This documentation and example code are provided under the same license as your package or project. Adapt freely within your codebase.
