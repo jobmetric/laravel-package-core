@@ -36,6 +36,7 @@ This package includes different parts that I will mention in order:
 - [Helper Functions](https://github.com/jobmetric/laravel-package-core/blob/master/docs/helper.md)
 - [Boolean Status](https://github.com/jobmetric/laravel-package-core/blob/master/docs/boolean-status.md)
 - [Has Dynamic Relations](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-dynamic-relations.md)
+- [Resource Resolve Event](https://github.com/jobmetric/laravel-package-core/blob/master/docs/resource-resolve-event.md)
 
 ## License
 

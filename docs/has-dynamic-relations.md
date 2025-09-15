@@ -107,3 +107,5 @@ $products = $tag->products;
 ### Conclusion
 
 Using `HasDynamicRelations` and the methods described above, you can define polymorphic relationships between models dynamically. This approach ensures that your package remains flexible and usable across different projects without requiring frequent changes to the package code.
+
+- [Resource Resolve Event](https://github.com/jobmetric/laravel-package-core/blob/master/docs/resource-resolve-event.md)
