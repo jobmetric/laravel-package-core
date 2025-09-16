@@ -1,6 +1,6 @@
 [Back To README.md](https://github.com/jobmetric/laravel-package-core/blob/master/README.md)
 
-# Introduction to ResourceResolveEvent — Global Resource Resolution Event
+# Introduction to Global Resource Resolution Event
 
 **Namespace:** `JobMetric\PackageCore\Events\ResourceResolveEvent`  
 **Purpose:** A single, package‑agnostic event for resolving a “resource” (e.g., `JsonResource`, array, DTO) for **any** subject (Eloquent model, DTO, etc.) with full control over *where it will be used* (`context`) and *how it should be shaped* (`hints` and `includes`).
@@ -465,3 +465,5 @@ A: Use `context` (e.g., `admin.detail`) and `hints` (e.g., `tenant_id`, `environ
 
 **Q: Should I cache the output?**  
 A: For hot paths, you can cache per subject/version/context. Provide `cacheable`/`cache_ttl` hints and implement caching inside listeners.
+
+- [Has Morph Resource Attributes](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-morph-resource-attributes.md)
