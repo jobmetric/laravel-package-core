@@ -49,6 +49,8 @@ use Throwable;
  * Usage:
  *   $model->slugable_resource;              // dynamic attribute
  *   $model->resolveMorphResource('slugable', context: 'api.detail'); // explicit call
+ *
+ * @property-read string $resource_morph_default_context Default message if no context is set.
  */
 trait HasMorphResourceAttributes
 {
@@ -89,6 +91,17 @@ trait HasMorphResourceAttributes
         }
 
         return parent::getAttribute($key);
+    }
+
+    /**
+     * Default message for unresolved resources if no default context is set.
+     *
+     * @return string
+     */
+    public function getResourceMorphDefaultContextAttribute(): string
+    {
+        return 'Flowable resource is not resolved. Please read: '
+            .'https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-morph-resource-attributes.md';
     }
 
     /**
@@ -390,7 +403,7 @@ trait HasMorphResourceAttributes
     /**
      * Determines if an array is associative (non-sequential integer keys).
      *
-     * @param array<mixed> $arr
+     * @param array $arr
      * @return bool
      */
     protected function isAssoc(array $arr): bool
