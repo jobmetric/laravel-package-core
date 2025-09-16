@@ -100,7 +100,7 @@ trait HasMorphResourceAttributes
      */
     public function getResourceMorphDefaultContextAttribute(): string
     {
-        return 'Flowable resource is not resolved. Please read: '
+        return 'Resource is not resolved. Please read: '
             .'https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-morph-resource-attributes.md';
     }
 
