@@ -466,4 +466,4 @@ A: Use `context` (e.g., `admin.detail`) and `hints` (e.g., `tenant_id`, `environ
 **Q: Should I cache the output?**  
 A: For hot paths, you can cache per subject/version/context. Provide `cacheable`/`cache_ttl` hints and implement caching inside listeners.
 
-- [Has Morph Resource Attributes](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-morph-resource-attributes.md)
+- [Next To Has Morph Resource Attributes](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-morph-resource-attributes.md)
