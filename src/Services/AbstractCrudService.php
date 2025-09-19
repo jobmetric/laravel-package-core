@@ -322,7 +322,7 @@ abstract class AbstractCrudService
             $this->fireStoreEvent($model, $data);
 
             return Response::make(true, trans('package-core::base.messages.created', [
-                'entity' => $this->entityName
+                'entity' => trans($this->entityName)
             ]), $this->resource::make($model->load($with)),201);
         });
     }
@@ -353,7 +353,7 @@ abstract class AbstractCrudService
             $this->fireUpdateEvent($model, $data);
 
             return Response::make(true, trans('package-core::base.messages.updated', [
-                'entity' => $this->entityName
+                'entity' => trans($this->entityName)
             ]), $this->resource::make($model->load($with)));
         });
     }
@@ -382,7 +382,7 @@ abstract class AbstractCrudService
             $this->fireDeleteEvent($model);
 
             return Response::make(true, trans('package-core::base.messages.deleted', [
-                'entity' => $this->entityName
+                'entity' => trans($this->entityName)
             ]), $payload);
         });
     }
@@ -416,7 +416,7 @@ abstract class AbstractCrudService
             $this->fireRestoreEvent($model);
 
             return Response::make(true, trans('package-core::base.messages.restored', [
-                'entity' => $this->entityName
+                'entity' => trans($this->entityName)
             ]), $this->resource::make($model));
         });
     }
@@ -451,7 +451,7 @@ abstract class AbstractCrudService
             $this->fireForceDeleteEvent($model);
 
             return Response::make(true, trans('package-core::base.messages.permanently_deleted', [
-                'entity' => $this->entityName
+                'entity' => trans($this->entityName)
             ]), $payload);
         });
     }
