@@ -38,6 +38,7 @@ This package includes different parts that I will mention in order:
 - [Has Dynamic Relations](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-dynamic-relations.md)
 - [Resource Resolve Event](https://github.com/jobmetric/laravel-package-core/blob/master/docs/resource-resolve-event.md)
 - [Has Morph Resource Attributes](https://github.com/jobmetric/laravel-package-core/blob/master/docs/has-morph-resource-attributes.md)
+- [Abstract CRUD Service](https://github.com/jobmetric/laravel-package-core/blob/master/docs/abstract-crud-service.md)
 
 ## License
 

@@ -524,3 +524,5 @@ A: No. It **never** lazy-loads. If the relation isn’t loaded, it returns `null
 ---
 
 _Use and adapt freely within your application or package._
+
+- [Next To Abstract CRUD Service](https://github.com/jobmetric/laravel-package-core/blob/master/docs/abstract-crud-service.md)
