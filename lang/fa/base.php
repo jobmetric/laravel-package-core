@@ -16,6 +16,14 @@ return [
         "errors" => "خطای اعتبارسنجی رخ داده است.",
     ],
 
+    "messages" => [
+        "created" => ":entity با موفقیت ایجاد شد.",
+        "updated" => ":entity با موفقیت بروزرسانی شد.",
+        "deleted" => ":entity با موفقیت حذف شد.",
+        "restored" => ":entity با موفقیت بازیابی شد.",
+        "permanently_deleted" => ":entity با موفقیت برای همیشه حذف شد.",
+    ],
+
     "components" => [
         "boolean_status" => [
             "label" => "وضعیت",

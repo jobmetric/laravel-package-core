@@ -16,6 +16,14 @@ return [
         "errors" => "Validation error occurred.",
     ],
 
+    "messages" => [
+        "created" => ":entity has been created.",
+        "updated" => ":entity has been updated.",
+        "deleted" => ":entity has been deleted.",
+        "restored" => ":entity has been restored.",
+        "permanently_deleted" => ":entity has been permanently deleted.",
+    ],
+
     "components" => [
         "boolean_status" => [
             "label" => "Status",
