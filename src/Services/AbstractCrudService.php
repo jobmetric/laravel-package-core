@@ -248,9 +248,16 @@ abstract class AbstractCrudService
      */
     protected function paginate(int $pageLimit = 15, array $filters = [], array $with = [], ?string $mode = null): Response
     {
-        return Response::make(true, null, $this->resource::collection(
-            $this->query($filters, $with, $mode)->paginate($pageLimit)
-        ));
+        $paginator = $this->query($filters, $with, $mode)->paginate($pageLimit);
+
+        $resources = $this->resource::collection($paginator);
+
+        $additional = $this->additionalForIndex($filters, $with, $mode);
+        if (!is_null($additional)) {
+            $resources = $resources->additional($additional);
+        }
+
+        return Response::make(true, null, $resources);
     }
 
     /**
@@ -264,9 +271,16 @@ abstract class AbstractCrudService
      */
     protected function all(array $filters = [], array $with = [], ?string $mode = null): Response
     {
-        return Response::make(true, null, $this->resource::collection(
-            $this->query($filters, $with, $mode)->get()
-        ));
+        $items = $this->query($filters, $with, $mode)->get();
+
+        $resources = $this->resource::collection($items);
+
+        $additional = $this->additionalForIndex($filters, $with, $mode);
+        if (!is_null($additional)) {
+            $resources = $resources->additional($additional);
+        }
+
+        return Response::make(true, null, $resources);
     }
 
     /**
@@ -292,9 +306,16 @@ abstract class AbstractCrudService
             }
         }
 
-        return Response::make(true, null, $this->resource::make(
-            $builder->with($with)->findOrFail($id)
-        ));
+        $model = $builder->with($with)->findOrFail($id);
+
+        $resourceInstance = $this->resource::make($model);
+
+        $additional = $this->additionalForShow($model);
+        if (!is_null($additional)) {
+            $resourceInstance = $resourceInstance->additional($additional);
+        }
+
+        return Response::make(true, null, $resourceInstance);
     }
 
     /**
@@ -321,9 +342,16 @@ abstract class AbstractCrudService
 
             $this->fireStoreEvent($model, $data);
 
+            $resourceInstance = $this->resource::make($model->load($with));
+
+            $additional = $this->additionalForMutation($model, $data, 'store');
+            if (!is_null($additional)) {
+                $resourceInstance = $resourceInstance->additional($additional);
+            }
+
             return Response::make(true, trans('package-core::base.messages.created', [
                 'entity' => trans($this->entityName)
-            ]), $this->resource::make($model->load($with)),201);
+            ]), $resourceInstance, 201);
         });
     }
 
@@ -352,9 +380,16 @@ abstract class AbstractCrudService
 
             $this->fireUpdateEvent($model, $data);
 
+            $resourceInstance = $this->resource::make($model->load($with));
+
+            $additional = $this->additionalForMutation($model, $data, 'update');
+            if (!is_null($additional)) {
+                $resourceInstance = $resourceInstance->additional($additional);
+            }
+
             return Response::make(true, trans('package-core::base.messages.updated', [
                 'entity' => trans($this->entityName)
-            ]), $this->resource::make($model->load($with)));
+            ]), $resourceInstance);
         });
     }
 
@@ -373,6 +408,11 @@ abstract class AbstractCrudService
         $model = $query->findOrFail($id);
 
         $payload = $this->resource::make($model);
+
+        $additional = $this->additionalForMutation($model, [], 'destroy');
+        if (!is_null($additional)) {
+            $payload = $payload->additional($additional);
+        }
 
         return DB::transaction(function () use ($model, $payload) {
             $this->beforeDestroy($model);
@@ -415,9 +455,16 @@ abstract class AbstractCrudService
 
             $this->fireRestoreEvent($model);
 
+            $resourceInstance = $this->resource::make($model);
+
+            $additional = $this->additionalForMutation($model, [], 'restore');
+            if (!is_null($additional)) {
+                $resourceInstance = $resourceInstance->additional($additional);
+            }
+
             return Response::make(true, trans('package-core::base.messages.restored', [
                 'entity' => trans($this->entityName)
-            ]), $this->resource::make($model));
+            ]), $resourceInstance);
         });
     }
 
@@ -442,6 +489,11 @@ abstract class AbstractCrudService
 
         $model = $this->model->newQuery()->onlyTrashed()->with($with)->findOrFail($id);
         $payload = $this->resource::make($model);
+
+        $additional = $this->additionalForMutation($model, [], 'forceDelete');
+        if (!is_null($additional)) {
+            $payload = $payload->additional($additional);
+        }
 
         return DB::transaction(function () use ($model, $payload) {
             $this->beforeForceDelete($model);

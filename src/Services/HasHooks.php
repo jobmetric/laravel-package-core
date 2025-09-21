@@ -159,4 +159,45 @@ trait HasHooks
     {
         // No-op by default.
     }
+
+    /**
+     * Additional data to include when showing a single model (used in show()).
+     *
+     * @param Model $model
+     *
+     * @return array|null
+     */
+    protected function additionalForShow(Model $model): ?array
+    {
+        return null;
+    }
+
+    /**
+     * Additional data for list responses (used in paginate() and all()).
+     * Useful for totals, aggregates, and applied filters echo.
+     *
+     * @param array $filters
+     * @param array $with
+     * @param string|null $mode 'withTrashed'|'onlyTrashed'|null
+     *
+     * @return array|null
+     */
+    protected function additionalForIndex(array $filters = [], array $with = [], ?string $mode = null): ?array
+    {
+        return null;
+    }
+
+    /**
+     * Additional data for mutation responses (store/update/destroy/restore/forceDelete).
+     *
+     * @param Model $model The affected model
+     * @param array $data Original input payload (if any)
+     * @param string $operation One of: store|update|destroy|restore|forceDelete
+     *
+     * @return array|null
+     */
+    protected function additionalForMutation(Model $model, array $data = [], string $operation = ''): ?array
+    {
+        return null;
+    }
 }
