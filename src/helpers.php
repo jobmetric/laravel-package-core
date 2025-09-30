@@ -276,6 +276,10 @@ if (!function_exists('dto')) {
 
         $request = new $requestClass;
 
+        if (method_exists($request, 'setContext')) {
+            $request->setContext($context);
+        }
+
         if (method_exists($requestClass, 'rulesFor')) {
             $rules = $requestClass::rulesFor($input, $context);
         } else {
