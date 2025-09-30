@@ -6,6 +6,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use JobMetric\PackageCore\Output\Response;
 
 if (!function_exists('appNamespace')) {
@@ -264,9 +265,10 @@ if (!function_exists('dto')) {
      * @param class-string $requestClass Fully-qualified class name of the Request-like validator.
      * @param array<string,mixed> $context Optional context passed to static normalize/rulesFor.
      *
-     * @return Response|array<string,mixed> On success, returns validated data array. On failure, returns a Response with errors.
+     * @return array<string,mixed> Validated data array.
+     * @throws Throwable
      */
-    function dto(array $input, string $requestClass, array $context = []): Response|array
+    function dto(array $input, string $requestClass, array $context = []): array
     {
         if (method_exists($requestClass, 'normalize')) {
             $input = $requestClass::normalize($input, $context);
@@ -290,9 +292,7 @@ if (!function_exists('dto')) {
         }
 
         if ($validator->fails()) {
-            $errors = $validator->errors()->all();
-
-            return Response::make(false, trans('package-core::base.validation.errors'), status: 422, errors: $errors);
+            throw ValidationException::withMessages($validator->errors()->toArray());
         }
 
         return $validator->validated();
@@ -303,37 +303,39 @@ if (!function_exists('dtoMany')) {
     /**
      * Validate multiple input arrays with the same Request-like class.
      *
-     * On any failures, flattens errors with item index and returns a single Response.
+     * Aggregates per-item ValidationException errors into a single ValidationException.
+     * Valid items are returned in the same index positions.
      *
      * @param array<int,array<string,mixed>> $items List of raw input items.
      * @param class-string $requestClass Request-like class for validation.
      * @param array<string,mixed>|callable(array,int):array $context Fixed context or a per-item context factory.
      *
-     * @return Response|array<int,array<string,mixed>> Validated list or a Response with aggregated errors.
+     * @return array<int,array<string,mixed>> Validated items.
+     * @throws Throwable
      */
-    function dtoMany(array $items, string $requestClass, array|callable $context = []): Response|array
+    function dtoMany(array $items, string $requestClass, array|callable $context = []): array
     {
         $validated = [];
-        $flatErrors = [];
+        $aggregated = [];
 
         foreach ($items as $i => $item) {
             $ctx = is_callable($context) ? $context($item, $i) : $context;
 
-            $res = dto($item, $requestClass, $ctx);
+            try {
+                $validated[$i] = dto($item, $requestClass, $ctx);
+            } catch (ValidationException $e) {
+                foreach ($e->errors() as $field => $messages) {
+                    $key = "items.$i.$field";
 
-            if ($res instanceof Response) {
-                $errs = is_array($res->errors ?? null) ? $res->errors : ['Validation failed.'];
-                foreach ($errs as $msg) {
-                    $flatErrors[] = "[#{$i}] {$msg}";
+                    foreach ($messages as $msg) {
+                        $aggregated[$key][] = $msg;
+                    }
                 }
-                continue;
             }
-
-            $validated[$i] = $res;
         }
 
-        if ($flatErrors) {
-            return Response::make(false, trans('package-core::base.validation.errors'), status: 422, errors: $flatErrors);
+        if (!empty($aggregated)) {
+            throw ValidationException::withMessages($aggregated);
         }
 
         return $validated;
