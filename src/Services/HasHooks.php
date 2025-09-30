@@ -53,11 +53,12 @@ trait HasHooks
     /**
      * Mutate/normalize payload before update.
      *
+     * @param Model $model
      * @param array $data
      *
      * @return void
      */
-    protected function changeFieldUpdate(array &$data): void
+    protected function changeFieldUpdate(Model $model, array &$data): void
     {
         // No-op by default.
     }

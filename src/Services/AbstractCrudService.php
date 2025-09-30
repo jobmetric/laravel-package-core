@@ -370,7 +370,7 @@ abstract class AbstractCrudService
         $model = $this->model->newQuery()->findOrFail($id);
 
         return DB::transaction(function () use ($model, $data, $with) {
-            $this->changeFieldUpdate($data);
+            $this->changeFieldUpdate($model, $data);
 
             $model->fill($data);
 
