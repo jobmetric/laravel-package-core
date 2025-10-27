@@ -7,9 +7,8 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
-use JobMetric\PackageCore\Output\Response;
 
-if (!function_exists('appNamespace')) {
+if (! function_exists('appNamespace')) {
     /**
      * Get the application namespace for the application.
      *
@@ -27,7 +26,7 @@ if (!function_exists('appNamespace')) {
     }
 }
 
-if (!function_exists('appFolderName')) {
+if (! function_exists('appFolderName')) {
     /**
      * Get the application folder name for the application.
      *
@@ -39,7 +38,7 @@ if (!function_exists('appFolderName')) {
     }
 }
 
-if (!function_exists('queryToSql')) {
+if (! function_exists('queryToSql')) {
     /**
      * get full sql query string in query builder
      *
@@ -53,7 +52,7 @@ if (!function_exists('queryToSql')) {
     }
 }
 
-if (!function_exists('checkDatabaseConnection')) {
+if (! function_exists('checkDatabaseConnection')) {
     /**
      * check database connection
      *
@@ -62,7 +61,9 @@ if (!function_exists('checkDatabaseConnection')) {
     function checkDatabaseConnection(): bool
     {
         try {
-            DB::connection()->getPdo();
+            DB::connection()
+                ->getPdo();
+
             return true;
         } catch (\Exception $e) {
             return false;
@@ -70,18 +71,18 @@ if (!function_exists('checkDatabaseConnection')) {
     }
 }
 
-if (!function_exists('shortFormatNumber')) {
+if (! function_exists('shortFormatNumber')) {
     /**
      * short format number
      *
      * @param string $number
-     * @param int $precision
+     * @param int    $precision
      *
      * @return string
      */
     function shortFormatNumber(string $number, int $precision = 1): string
     {
-        if (!is_numeric($number)) {
+        if (! is_numeric($number)) {
             throw new InvalidArgumentException("Input must be a numeric value.");
         }
 
@@ -95,11 +96,11 @@ if (!function_exists('shortFormatNumber')) {
         $power = floor(log($number, 1000));
         $shortNumber = $number / pow(1000, $power);
 
-        return round($shortNumber, $precision) . $units[$power];
+        return round($shortNumber, $precision).$units[$power];
     }
 }
 
-if (!function_exists('getServiceTypeClass')) {
+if (! function_exists('getServiceTypeClass')) {
     /**
      * get service type class
      *
@@ -117,33 +118,31 @@ if (!function_exists('getServiceTypeClass')) {
     }
 }
 
-if (!function_exists('resolveNamespacePath')) {
+if (! function_exists('resolveNamespacePath')) {
     /**
      * Resolve the file system path of a given namespace.
      *
      * @param string $namespace
+     *
      * @return string|null
      */
     function resolveNamespacePath(string $namespace): ?string
     {
         $composerJsonPath = base_path('composer.json');
 
-        if (!file_exists($composerJsonPath)) {
+        if (! file_exists($composerJsonPath)) {
             return null;
         }
 
         $composerData = json_decode(file_get_contents($composerJsonPath), true);
-        $psr4Mappings = array_merge(
-            $composerData['autoload']['psr-4'] ?? [],
-            $composerData['autoload-dev']['psr-4'] ?? []
-        );
+        $psr4Mappings = array_merge($composerData['autoload']['psr-4'] ?? [], $composerData['autoload-dev']['psr-4'] ?? []);
 
         foreach ($psr4Mappings as $prefix => $path) {
             if (str_starts_with($namespace, trim($prefix, '\\'))) {
                 $relativeNamespace = str_replace($prefix, '', $namespace);
                 $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
 
-                return str_replace('/', DIRECTORY_SEPARATOR, base_path(trim($path, '/') . DIRECTORY_SEPARATOR . $relativePath));
+                return str_replace('/', DIRECTORY_SEPARATOR, base_path(trim($path, '/').DIRECTORY_SEPARATOR.$relativePath));
             }
         }
 
@@ -157,7 +156,7 @@ if (!function_exists('resolveNamespacePath')) {
                     $relativePath = str_replace('\\', DIRECTORY_SEPARATOR, $relativeNamespace);
 
                     foreach ((array)$paths as $vendorPath) {
-                        $fullPath = rtrim($vendorPath, '/') . DIRECTORY_SEPARATOR . $relativePath;
+                        $fullPath = rtrim($vendorPath, '/').DIRECTORY_SEPARATOR.$relativePath;
                         $fullPath = str_replace('/', DIRECTORY_SEPARATOR, $fullPath);
                         if (file_exists($fullPath)) {
                             return $fullPath;
@@ -171,11 +170,11 @@ if (!function_exists('resolveNamespacePath')) {
     }
 }
 
-if (!function_exists('getDriverNames')) {
+if (! function_exists('getDriverNames')) {
     /**
      * get driver names
      *
-     * @param array $namespaces
+     * @param array  $namespaces
      * @param string $suffix
      *
      * @return array
@@ -196,7 +195,7 @@ if (!function_exists('getDriverNames')) {
                         $filename = $file->getFilenameWithoutExtension();
 
                         if ($suffix === '' || str_ends_with($filename, $suffix)) {
-                            $result[] = rtrim($namespace, '\\') . '\\' . $filename;
+                            $result[] = rtrim($namespace, '\\').'\\'.$filename;
                         }
                     }
                 }
@@ -207,7 +206,7 @@ if (!function_exists('getDriverNames')) {
     }
 }
 
-if (!function_exists('loadMigrationPath')) {
+if (! function_exists('loadMigrationPath')) {
     /**
      * Load migrations from a specified path.
      *
@@ -217,7 +216,7 @@ if (!function_exists('loadMigrationPath')) {
      */
     function loadMigrationPath(string $path): void
     {
-        foreach (glob($path . '/*.php') as $file) {
+        foreach (glob($path.'/*.php') as $file) {
             $migration = include $file;
             if ($migration instanceof Migration) {
                 $migration->up();
@@ -226,11 +225,11 @@ if (!function_exists('loadMigrationPath')) {
     }
 }
 
-if (!function_exists('hasPropertyInClass')) {
+if (! function_exists('hasPropertyInClass')) {
     /**
      * Check if a class has a specific property defined in its own class scope.
      *
-     * @param mixed $object
+     * @param mixed  $object
      * @param string $property
      *
      * @return bool
@@ -241,7 +240,10 @@ if (!function_exists('hasPropertyInClass')) {
         $reflection = new ReflectionClass($object);
 
         if ($reflection->hasProperty($property)) {
-            $declaringClass = $reflection->getProperty($property)->getDeclaringClass()->getName();
+            $declaringClass = $reflection->getProperty($property)
+                ->getDeclaringClass()
+                ->getName();
+
             return $declaringClass === $reflection->getName();
         }
 
@@ -249,7 +251,7 @@ if (!function_exists('hasPropertyInClass')) {
     }
 }
 
-if (!function_exists('dto')) {
+if (! function_exists('dto')) {
     /**
      * Validate an input array against a Request-like class.
      *
@@ -261,9 +263,9 @@ if (!function_exists('dto')) {
      *
      * No container resolution, no HTTP lifecycle, no prepareForValidation(). Pure and predictable.
      *
-     * @param array<string,mixed> $input Raw input data to validate.
-     * @param class-string $requestClass Fully-qualified class name of the Request-like validator.
-     * @param array<string,mixed> $context Optional context passed to static normalize/rulesFor.
+     * @param array<string,mixed> $input        Raw input data to validate.
+     * @param class-string        $requestClass Fully-qualified class name of the Request-like validator.
+     * @param array<string,mixed> $context      Optional context passed to static normalize/rulesFor.
      *
      * @return array<string,mixed> Validated data array.
      * @throws Throwable
@@ -296,23 +298,24 @@ if (!function_exists('dto')) {
         }
 
         if ($validator->fails()) {
-            throw ValidationException::withMessages($validator->errors()->toArray());
+            throw ValidationException::withMessages($validator->errors()
+                ->toArray());
         }
 
         return $validator->validated();
     }
 }
 
-if (!function_exists('dtoMany')) {
+if (! function_exists('dtoMany')) {
     /**
      * Validate multiple input arrays with the same Request-like class.
      *
      * Aggregates per-item ValidationException errors into a single ValidationException.
      * Valid items are returned in the same index positions.
      *
-     * @param array<int,array<string,mixed>> $items List of raw input items.
-     * @param class-string $requestClass Request-like class for validation.
-     * @param array<string,mixed>|callable(array,int):array $context Fixed context or a per-item context factory.
+     * @param array<int,array<string,mixed>>                $items        List of raw input items.
+     * @param class-string                                  $requestClass Request-like class for validation.
+     * @param array<string,mixed>|callable(array,int):array $context      Fixed context or a per-item context factory.
      *
      * @return array<int,array<string,mixed>> Validated items.
      * @throws Throwable
@@ -338,10 +341,50 @@ if (!function_exists('dtoMany')) {
             }
         }
 
-        if (!empty($aggregated)) {
+        if (! empty($aggregated)) {
             throw ValidationException::withMessages($aggregated);
         }
 
         return $validated;
+    }
+}
+
+if (! function_exists('class_path')) {
+    /**
+     * Get the file path of a class, interface, or trait using reflection.
+     *
+     * @param string $namespace
+     *
+     * @return string|null
+     */
+    function class_path(string $namespace): ?string
+    {
+        if (! class_exists($namespace) && ! interface_exists($namespace) && ! trait_exists($namespace)) {
+            return null;
+        }
+
+        $ref = new ReflectionClass($namespace);
+
+        return $ref->getFileName() ?: null;
+    }
+}
+
+if (! function_exists('class_directory_path')) {
+    /**
+     * Get the directory path of a class, interface, or trait using reflection.
+     *
+     * @param string $namespace
+     *
+     * @return string|null
+     */
+    function class_directory_path(string $namespace): ?string
+    {
+        if (! class_exists($namespace) && ! interface_exists($namespace) && ! trait_exists($namespace)) {
+            return null;
+        }
+
+        $reflection = new ReflectionClass($namespace);
+
+        return dirname($reflection->getFileName());
     }
 }
