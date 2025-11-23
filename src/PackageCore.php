@@ -161,29 +161,30 @@ class PackageCore
     }
 
     /**
-     * register class in package.
+     * Registers a class or factory callback in the package configuration
+     * so it can later be bound into the service container.
      *
-     * @param string $key
-     * @param string $class
-     * @param string $type
+     * @param string $key                     Identifier under which the binding will be registered in the container.
+     * @param string|callable $classOrFactory Concrete class name or factory callback that resolves the instance.
+     * @param string $type                    Binding type, usually one of RegisterClassTypeEnum::values().
      *
      * @return static
      * @throws RegisterClassTypeNotFoundException
      */
-    public function registerClass(string $key, string $class, string $type = 'bind'): static
+    public function registerClass(string $key, string|callable $classOrFactory, string $type = 'bind'): static
     {
-        if (!in_array($type, RegisterClassTypeEnum::values())) {
+        if (! in_array($type, RegisterClassTypeEnum::values(), true)) {
             throw new RegisterClassTypeNotFoundException($type);
         }
 
-        if (!isset($this->option['classes'])) {
+        if (! isset($this->option['classes'])) {
             $this->option['classes'] = [];
         }
 
-        if (!in_array($key, $this->option['classes'])) {
+        if (! array_key_exists($key, $this->option['classes'])) {
             $this->option['classes'][$key] = [
-                'class' => $class,
-                'type' => $type,
+                'class' => $classOrFactory,
+                'type'  => $type,
             ];
         }
 
