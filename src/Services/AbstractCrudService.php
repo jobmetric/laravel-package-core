@@ -336,9 +336,11 @@ abstract class AbstractCrudService
 
             $model->fill($data);
 
+            $this->beforeCommon('store', $model, $data);
             $this->beforeStore($model, $data);
             $model->save();
             $this->afterStore($model, $data);
+            $this->afterCommon('store', $model, $data);
 
             $this->fireStoreEvent($model, $data);
 
@@ -374,9 +376,11 @@ abstract class AbstractCrudService
 
             $model->fill($data);
 
+            $this->beforeCommon('update', $model, $data);
             $this->beforeUpdate($model, $data);
             $model->save();
             $this->afterUpdate($model, $data);
+            $this->afterCommon('update', $model, $data);
 
             $this->fireUpdateEvent($model, $data);
 
@@ -415,9 +419,11 @@ abstract class AbstractCrudService
         }
 
         return DB::transaction(function () use ($model, $payload) {
+            $this->beforeCommon('destroy', $model, []);
             $this->beforeDestroy($model);
             $model->delete();
             $this->afterDestroy($model);
+            $this->afterCommon('destroy', $model, []);
 
             $this->fireDeleteEvent($model);
 
@@ -449,9 +455,11 @@ abstract class AbstractCrudService
         $model = $this->model->newQuery()->onlyTrashed()->with($with)->findOrFail($id);
 
         return DB::transaction(function () use ($model) {
+            $this->beforeCommon('restore', $model, []);
             $this->beforeRestore($model);
             $model->restore();
             $this->afterRestore($model);
+            $this->afterCommon('restore', $model, []);
 
             $this->fireRestoreEvent($model);
 
@@ -496,9 +504,11 @@ abstract class AbstractCrudService
         }
 
         return DB::transaction(function () use ($model, $payload) {
+            $this->beforeCommon('forceDelete', $model, []);
             $this->beforeForceDelete($model);
             $model->forceDelete();
             $this->afterForceDelete($model);
+            $this->afterCommon('forceDelete', $model, []);
 
             $this->fireForceDeleteEvent($model);
 

@@ -13,6 +13,36 @@ use Illuminate\Database\Eloquent\Model;
 trait HasHooks
 {
     /**
+     * Common hook executed before all mutation operations (store, update, destroy, restore, forceDelete).
+     * Override this method in child services to add common pre-operation logic.
+     *
+     * @param string $operation The operation being performed: 'store'|'update'|'destroy'|'restore'|'forceDelete'
+     * @param Model|null $model The model instance (new instance for store, existing instance for others)
+     * @param array $data The data payload (empty for destroy/restore/forceDelete)
+     *
+     * @return void
+     */
+    protected function beforeCommon(string $operation, ?Model $model = null, array $data = []): void
+    {
+        // No-op by default.
+    }
+
+    /**
+     * Common hook executed after all mutation operations (store, update, destroy, restore, forceDelete).
+     * Override this method in child services to add common post-operation logic.
+     *
+     * @param string $operation The operation being performed: 'store'|'update'|'destroy'|'restore'|'forceDelete'
+     * @param Model $model The model instance
+     * @param array $data The data payload (empty for destroy/restore/forceDelete)
+     *
+     * @return void
+     */
+    protected function afterCommon(string $operation, Model $model, array $data = []): void
+    {
+        // No-op by default.
+    }
+
+    /**
      * Mutate/normalize payload before create.
      *
      * @param array $data
