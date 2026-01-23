@@ -22,6 +22,7 @@ return [
         "deleted" => ":entity با موفقیت حذف شد.",
         "restored" => ":entity با موفقیت بازیابی شد.",
         "permanently_deleted" => ":entity با موفقیت برای همیشه حذف شد.",
+        "status_toggled" => "وضعیت :entity با موفقیت تغییر کرد.",
     ],
 
     "components" => [

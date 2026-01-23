@@ -22,6 +22,7 @@ return [
         "deleted" => ":entity has been deleted.",
         "restored" => ":entity has been restored.",
         "permanently_deleted" => ":entity has been permanently deleted.",
+        "status_toggled" => ":entity status has been toggled.",
     ],
 
     "components" => [

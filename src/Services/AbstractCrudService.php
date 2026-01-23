@@ -114,6 +114,14 @@ abstract class AbstractCrudService
     protected bool $hasForceDelete = false;
 
     /**
+     * Indicates toggleStatus() should be exposed by this service.
+     * Requires model to have a 'status' boolean field.
+     *
+     * @var bool
+     */
+    protected bool $hasToggleStatus = false;
+
+    /**
      * Event class name (FQCN) dispatched after storing a model.
      *
      * @var class-string|null
@@ -181,6 +189,10 @@ abstract class AbstractCrudService
 
         if ($this->softDelete || $this->hasForceDelete) {
             $methods[] = 'forceDelete';
+        }
+
+        if ($this->hasToggleStatus) {
+            $methods[] = 'toggleStatus';
         }
 
         $methods = array_values(array_diff($methods, $this->excepts));
@@ -526,5 +538,52 @@ abstract class AbstractCrudService
     protected function modelSupportsSoftDeletes(): bool
     {
         return in_array(SoftDeletes::class, class_uses_recursive(get_class($this->model)), true);
+    }
+
+    /**
+     * Toggle the boolean 'status' field for a given model.
+     *
+     * Role: quick enable/disable switch for models with a status field.
+     * Checks if the model has a 'status' attribute before toggling.
+     *
+     * @param int $id Primary key of the record.
+     * @param array<int,string> $with Eager-loaded relations after save.
+     *
+     * @return Response Standardized response with updated resource.
+     * @throws Throwable
+     */
+    public function toggleStatus(int $id, array $with = []): Response
+    {
+        return DB::transaction(function () use ($id, $with) {
+            $model = $this->model->newQuery()->findOrFail($id);
+
+            // Check if model has status attribute
+            // We check both getAttributes() (for loaded attributes) and hasAttribute() (for all possible attributes)
+            $attributes = $model->getAttributes();
+            $hasStatus = array_key_exists('status', $attributes) || 
+                       (method_exists($model, 'hasAttribute') && $model->hasAttribute('status')) ||
+                       in_array('status', $model->getFillable(), true) ||
+                       property_exists($model, 'status');
+
+            if (!$hasStatus) {
+                throw new BadMethodCallException('Model does not have a status field.');
+            }
+
+            $model->status = ! $model->status;
+            $model->save();
+
+            $this->afterCommon('toggleStatus', $model, []);
+
+            $resourceInstance = $this->resource::make($model->load($with));
+
+            $additional = $this->additionalForMutation($model, [], 'toggleStatus');
+            if (!is_null($additional)) {
+                $resourceInstance = $resourceInstance->additional($additional);
+            }
+
+            return Response::make(true, trans('package-core::base.messages.status_toggled', [
+                'entity' => trans($this->entityName),
+            ]), $resourceInstance);
+        });
     }
 }
