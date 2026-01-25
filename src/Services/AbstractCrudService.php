@@ -23,8 +23,9 @@ use Throwable;
  * - Uniform output using JobMetric PackageCore Response
  *
  * Feature flags:
- * - $softDelete: enable soft-deletion semantics for this service
+ * - $hasUpdate: expose update() operation (default: true)
  * - $hasDelete: expose destroy() operation (default: true)
+ * - $softDelete: enable soft-deletion semantics for this service
  * - $hasRestore: expose restore() operation (requires soft-deletes)
  * - $hasForceDelete: expose forceDelete() operation (requires soft-deletes)
  */
@@ -97,6 +98,14 @@ abstract class AbstractCrudService
      * @var bool
      */
     protected bool $softDelete = false;
+
+    /**
+     * Indicates update() should be exposed by this service.
+     * Default: true. Set to false to disable update operations.
+     *
+     * @var bool
+     */
+    protected bool $hasUpdate = true;
 
     /**
      * Indicates destroy() should be exposed by this service.
@@ -190,7 +199,11 @@ abstract class AbstractCrudService
      */
     public function __call(string $name, array $arguments)
     {
-        $methods = ['query', 'paginate', 'all', 'show', 'store', 'update'];
+        $methods = ['query', 'paginate', 'all', 'show', 'store'];
+
+        if ($this->hasUpdate) {
+            $methods[] = 'update';
+        }
 
         if ($this->hasDelete) {
             $methods[] = 'destroy';
@@ -391,9 +404,14 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with updated resource.
      * @throws Throwable
+     * @throws BadMethodCallException
      */
     protected function update(int $id, array $data, array $with = []): Response
     {
+        if (!$this->hasUpdate) {
+            throw new BadMethodCallException('Update operation is not enabled for this service.');
+        }
+
         $model = $this->model->newQuery()->findOrFail($id);
 
         return DB::transaction(function () use ($model, $data, $with) {
