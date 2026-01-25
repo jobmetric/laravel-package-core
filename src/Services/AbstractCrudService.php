@@ -24,6 +24,7 @@ use Throwable;
  *
  * Feature flags:
  * - $softDelete: enable soft-deletion semantics for this service
+ * - $hasDelete: expose destroy() operation (default: true)
  * - $hasRestore: expose restore() operation (requires soft-deletes)
  * - $hasForceDelete: expose forceDelete() operation (requires soft-deletes)
  */
@@ -96,6 +97,14 @@ abstract class AbstractCrudService
      * @var bool
      */
     protected bool $softDelete = false;
+
+    /**
+     * Indicates destroy() should be exposed by this service.
+     * Default: true. Set to false to disable delete operations.
+     *
+     * @var bool
+     */
+    protected bool $hasDelete = true;
 
     /**
      * Indicates restore() should be exposed by this service.
@@ -181,14 +190,18 @@ abstract class AbstractCrudService
      */
     public function __call(string $name, array $arguments)
     {
-        $methods = ['query', 'paginate', 'all', 'show', 'store', 'update', 'destroy'];
+        $methods = ['query', 'paginate', 'all', 'show', 'store', 'update'];
 
-        if ($this->softDelete || $this->hasRestore) {
-            $methods[] = 'restore';
-        }
+        if ($this->hasDelete) {
+            $methods[] = 'destroy';
 
-        if ($this->softDelete || $this->hasForceDelete) {
-            $methods[] = 'forceDelete';
+            if ($this->softDelete || $this->hasRestore) {
+                $methods[] = 'restore';
+            }
+
+            if ($this->softDelete || $this->hasForceDelete) {
+                $methods[] = 'forceDelete';
+            }
         }
 
         if ($this->hasToggleStatus) {
@@ -417,9 +430,14 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with deleted resource snapshot.
      * @throws Throwable
+     * @throws BadMethodCallException
      */
     protected function destroy(int $id, array $with = []): Response
     {
+        if (!$this->hasDelete) {
+            throw new BadMethodCallException('Delete operation is not enabled for this service.');
+        }
+
         $query = $this->model->newQuery()->with($with);
         $model = $query->findOrFail($id);
 
@@ -453,9 +471,14 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with restored resource.
      * @throws Throwable
+     * @throws BadMethodCallException
      */
     protected function restore(int $id, array $with = []): Response
     {
+        if (!$this->hasDelete) {
+            throw new BadMethodCallException('Restore operation requires delete operations to be enabled.');
+        }
+
         if (!$this->hasRestore && !$this->softDelete) {
             throw new BadMethodCallException('Restore operation is not enabled for this service.');
         }
@@ -496,9 +519,14 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with force-deleted resource snapshot.
      * @throws Throwable
+     * @throws BadMethodCallException
      */
     protected function forceDelete(int $id, array $with = []): Response
     {
+        if (!$this->hasDelete) {
+            throw new BadMethodCallException('Force delete operation requires delete operations to be enabled.');
+        }
+
         if (!$this->hasForceDelete && !$this->softDelete) {
             throw new BadMethodCallException('Force delete operation is not enabled for this service.');
         }
@@ -560,7 +588,7 @@ abstract class AbstractCrudService
             // Check if model has status attribute
             // We check both getAttributes() (for loaded attributes) and hasAttribute() (for all possible attributes)
             $attributes = $model->getAttributes();
-            $hasStatus = array_key_exists('status', $attributes) || 
+            $hasStatus = array_key_exists('status', $attributes) ||
                        (method_exists($model, 'hasAttribute') && $model->hasAttribute('status')) ||
                        in_array('status', $model->getFillable(), true) ||
                        property_exists($model, 'status');
