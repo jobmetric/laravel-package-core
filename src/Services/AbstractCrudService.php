@@ -25,9 +25,10 @@ use Throwable;
  * Feature flags:
  * - $hasUpdate: expose update() operation (default: true)
  * - $hasDelete: expose destroy() operation (default: true)
- * - $softDelete: enable soft-deletion semantics for this service
- * - $hasRestore: expose restore() operation (requires soft-deletes)
- * - $hasForceDelete: expose forceDelete() operation (requires soft-deletes)
+ * - $softDelete: when true, restore and forceDelete can be enabled via hasRestore/hasForceDelete.
+ *   When false, neither restore nor forceDelete are available. Default false.
+ * - $hasRestore: when true (and softDelete is true), expose restore(). Default false.
+ * - $hasForceDelete: when true (and softDelete is true), expose forceDelete(). Default false.
  */
 abstract class AbstractCrudService
 {
@@ -92,8 +93,8 @@ abstract class AbstractCrudService
     protected static array $defaultSort = ['-id'];
 
     /**
-     * Indicates the service is designed to use soft-deletion semantics.
-     * If true, delete()/restore()/forceDelete() features can be exposed per flags.
+     * When true: restore and forceDelete can be enabled via hasRestore and hasForceDelete.
+     * When false: neither restore nor forceDelete are available. Default false.
      *
      * @var bool
      */
@@ -116,16 +117,16 @@ abstract class AbstractCrudService
     protected bool $hasDelete = true;
 
     /**
-     * Indicates restore() should be exposed by this service.
-     * Requires $softDelete = true and model using SoftDeletes.
+     * When true (and softDelete is true): expose restore().
+     * Default false.
      *
      * @var bool
      */
     protected bool $hasRestore = false;
 
     /**
-     * Indicates forceDelete() should be exposed by this service.
-     * Requires $softDelete = true and model using SoftDeletes.
+     * When true (and softDelete is true): expose forceDelete().
+     * Default false.
      *
      * @var bool
      */
@@ -497,7 +498,7 @@ abstract class AbstractCrudService
             throw new BadMethodCallException('Restore operation requires delete operations to be enabled.');
         }
 
-        if (!$this->hasRestore && !$this->softDelete) {
+        if (! $this->softDelete && ! $this->hasRestore) {
             throw new BadMethodCallException('Restore operation is not enabled for this service.');
         }
 
@@ -545,7 +546,7 @@ abstract class AbstractCrudService
             throw new BadMethodCallException('Force delete operation requires delete operations to be enabled.');
         }
 
-        if (!$this->hasForceDelete && !$this->softDelete) {
+        if (! $this->softDelete && ! $this->hasForceDelete) {
             throw new BadMethodCallException('Force delete operation is not enabled for this service.');
         }
 
