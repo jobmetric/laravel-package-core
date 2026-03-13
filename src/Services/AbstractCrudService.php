@@ -285,7 +285,7 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with resource collection.
      */
-    protected function paginate(int $pageLimit = 15, array $filters = [], array $with = [], ?string $mode = null): Response
+    public function paginate(int $pageLimit = 15, array $filters = [], array $with = [], ?string $mode = null): Response
     {
         $paginator = $this->query($filters, $with, $mode)->paginate($pageLimit);
 
@@ -308,7 +308,7 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with resource collection.
      */
-    protected function all(array $filters = [], array $with = [], ?string $mode = null): Response
+    public function all(array $filters = [], array $with = [], ?string $mode = null): Response
     {
         $items = $this->query($filters, $with, $mode)->get();
 
@@ -331,7 +331,7 @@ abstract class AbstractCrudService
      *
      * @return Response Standardized response with single resource.
      */
-    protected function show(int $id, array $with = [], ?string $mode = null): Response
+    public function show(int $id, array $with = [], ?string $mode = null): Response
     {
         $builder = $this->model->newQuery();
 
@@ -366,7 +366,7 @@ abstract class AbstractCrudService
      * @return Response Standardized response with created resource.
      * @throws Throwable
      */
-    protected function store(array $data, array $with = []): Response
+    public function store(array $data, array $with = []): Response
     {
         return DB::transaction(function () use ($data, $with) {
             $model = $this->model->newInstance();
@@ -407,7 +407,7 @@ abstract class AbstractCrudService
      * @throws Throwable
      * @throws BadMethodCallException
      */
-    protected function update(int $id, array $data, array $with = []): Response
+    public function update(int $id, array $data, array $with = []): Response
     {
         if (!$this->hasUpdate) {
             throw new BadMethodCallException('Update operation is not enabled for this service.');
@@ -451,7 +451,7 @@ abstract class AbstractCrudService
      * @throws Throwable
      * @throws BadMethodCallException
      */
-    protected function destroy(int $id, array $with = []): Response
+    public function destroy(int $id, array $with = []): Response
     {
         if (!$this->hasDelete) {
             throw new BadMethodCallException('Delete operation is not enabled for this service.');
@@ -492,7 +492,7 @@ abstract class AbstractCrudService
      * @throws Throwable
      * @throws BadMethodCallException
      */
-    protected function restore(int $id, array $with = []): Response
+    public function restore(int $id, array $with = []): Response
     {
         if (!$this->hasDelete) {
             throw new BadMethodCallException('Restore operation requires delete operations to be enabled.');
@@ -540,7 +540,7 @@ abstract class AbstractCrudService
      * @throws Throwable
      * @throws BadMethodCallException
      */
-    protected function forceDelete(int $id, array $with = []): Response
+    public function forceDelete(int $id, array $with = []): Response
     {
         if (!$this->hasDelete) {
             throw new BadMethodCallException('Force delete operation requires delete operations to be enabled.');
