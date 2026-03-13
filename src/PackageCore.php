@@ -53,6 +53,7 @@ class PackageCore
     {
         $this->option['hasConfig'] = true;
 
+        $this->option['config'] = $this->option['config'] ?? [];
         foreach ($configs as $config) {
             if (!in_array($config, ['config', $this->name])) {
                 $this->option['config'][] = $config;
@@ -229,7 +230,7 @@ class PackageCore
             $groups = [$groups];
         }
 
-        if (!in_array($this->name, $groups)) {
+        if (!in_array($this->name, $groups, true)) {
             $groups[] = $this->name;
         }
 
