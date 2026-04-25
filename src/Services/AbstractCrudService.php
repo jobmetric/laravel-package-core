@@ -296,7 +296,7 @@ abstract class AbstractCrudService
             $resources = $resources->additional($additional);
         }
 
-        return Response::make(true, null, $resources);
+        return Response::make(true, '', $resources);
     }
 
     /**
@@ -319,7 +319,7 @@ abstract class AbstractCrudService
             $resources = $resources->additional($additional);
         }
 
-        return Response::make(true, null, $resources);
+        return Response::make(true, '', $resources);
     }
 
     /**
@@ -354,7 +354,7 @@ abstract class AbstractCrudService
             $resourceInstance = $resourceInstance->additional($additional);
         }
 
-        return Response::make(true, null, $resourceInstance);
+        return Response::make(true, '', $resourceInstance);
     }
 
     /**
