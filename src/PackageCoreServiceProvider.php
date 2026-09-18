@@ -102,10 +102,11 @@ abstract class PackageCoreServiceProvider extends ServiceProvider
         // bootable package
         $this->loadTranslation();
         $this->loadRoute();
+        // Register paths in every runtime; this does not execute migrations.
+        $this->loadMigration();
 
         if ($this->app->runningInConsole()) {
             // bootable package in console
-            $this->loadMigration();
             $this->registerCommand();
             $this->registerPublishable();
 
