@@ -34,6 +34,7 @@ abstract class AbstractCrudService
 {
     use HasHooks,
         HasEvents,
+        HasCommittedEvents,
         QueryHooks;
 
     /**
@@ -382,6 +383,7 @@ abstract class AbstractCrudService
             $this->afterCommon('store', $model, $data);
 
             $this->fireStoreEvent($model, $data);
+            $this->fireCommittedEvent('store', $model, $model->exists);
 
             $resourceInstance = $this->resource::make($model->load($with));
 
@@ -416,6 +418,7 @@ abstract class AbstractCrudService
         $model = $this->model->newQuery()->findOrFail($id);
 
         return DB::transaction(function () use ($model, $data, $with) {
+            $committedBefore = $this->committedEventState($model);
             $this->changeFieldUpdate($model, $data);
 
             $model->fill($data);
@@ -427,6 +430,7 @@ abstract class AbstractCrudService
             $this->afterCommon('update', $model, $data);
 
             $this->fireUpdateEvent($model, $data);
+            $this->fireCommittedEvent('update', $model, $committedBefore !== $this->committedEventState($model));
 
             $resourceInstance = $this->resource::make($model->load($with));
 
@@ -470,11 +474,12 @@ abstract class AbstractCrudService
         return DB::transaction(function () use ($model, $payload) {
             $this->beforeCommon('destroy', $model, []);
             $this->beforeDestroy($model);
-            $model->delete();
+            $committedSuccess = $model->delete();
             $this->afterDestroy($model);
             $this->afterCommon('destroy', $model, []);
 
             $this->fireDeleteEvent($model);
+            $this->fireCommittedEvent('destroy', $model, $committedSuccess !== false);
 
             return Response::make(true, trans('package-core::base.messages.deleted', [
                 'entity' => trans($this->entityName)
@@ -511,11 +516,12 @@ abstract class AbstractCrudService
         return DB::transaction(function () use ($model) {
             $this->beforeCommon('restore', $model, []);
             $this->beforeRestore($model);
-            $model->restore();
+            $committedSuccess = $model->restore();
             $this->afterRestore($model);
             $this->afterCommon('restore', $model, []);
 
             $this->fireRestoreEvent($model);
+            $this->fireCommittedEvent('restore', $model, $committedSuccess !== false);
 
             $resourceInstance = $this->resource::make($model);
 
@@ -565,11 +571,12 @@ abstract class AbstractCrudService
         return DB::transaction(function () use ($model, $payload) {
             $this->beforeCommon('forceDelete', $model, []);
             $this->beforeForceDelete($model);
-            $model->forceDelete();
+            $committedSuccess = $model->forceDelete();
             $this->afterForceDelete($model);
             $this->afterCommon('forceDelete', $model, []);
 
             $this->fireForceDeleteEvent($model);
+            $this->fireCommittedEvent('forceDelete', $model, $committedSuccess !== false);
 
             return Response::make(true, trans('package-core::base.messages.permanently_deleted', [
                 'entity' => trans($this->entityName)
@@ -620,6 +627,7 @@ abstract class AbstractCrudService
             $model->save();
 
             $this->afterCommon('toggleStatus', $model, []);
+            $this->fireCommittedEvent('update', $model, $model->wasChanged('status'));
 
             $resourceInstance = $this->resource::make($model->load($with));
 
